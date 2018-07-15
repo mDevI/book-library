@@ -1,11 +1,13 @@
 package com.mdevi.booklib.model;
 
 import java.sql.Date;
+import java.util.List;
 
 public class Author {
     private int id;
     private String name;
     private Date dateOfBirth;
+    private List<Book> books;
 
     public Author() {
     }
@@ -38,5 +40,13 @@ public class Author {
 
     public void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(List<Book> books) {
+        this.books = books;
     }
 }
