@@ -8,6 +8,7 @@ public class Author {
     private String name;
     private Date dateOfBirth;
     private List<Book> books;
+    private int rank;
 
     public Author() {
     }
@@ -48,5 +49,13 @@ public class Author {
 
     public void setBooks(List<Book> books) {
         this.books = books;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
     }
 }
