@@ -1,5 +1,6 @@
 package com.mdevi.booklib.service;
 
+import com.mdevi.booklib.dao.AuthorDAO;
 import com.mdevi.booklib.dao.repository.AuthorRepository;
 import com.mdevi.booklib.model.Author;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +20,14 @@ import java.util.Scanner;
 @Service
 public class AuthorsOperations {
 
-    private final AuthorRepository repositoryAuthors;
+    private final AuthorDAO repositoryAuthors;
 
     @Autowired
     public AuthorsOperations(AuthorRepository repository) {
         this.repositoryAuthors = repository;
     }
 
-    @ShellMethod(value = "Show all books authors info.", key = "getAuthors")
+    @ShellMethod(value = "Show all books authors info.", key = "get-all-authors")
     public void showAuthors(){
         List<Author> authors = repositoryAuthors.findAll();
         if (authors != null && authors.size()>0) {
