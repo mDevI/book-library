@@ -57,5 +57,15 @@ public class Author {
 
     public void setRank(int rank) {
         this.rank = rank;
+}
+
+    @Override
+    public String toString() {
+        return "Author{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", rank=" + rank +
+                '}';
     }
 }
