@@ -38,7 +38,8 @@ public class BookRepository implements BookDAO {
             "from new_schema.books b left join new_schema.authors a on b.author = a.id " +
             " left join new_schema.genres g on g.id = b.genre where b.title LIKE :pattern";
     private static final String SELECT_BOOK_TITLE_BY_ID = "select title from new_schema.books where book_id = :id";
-    private static final String INSERT_BOOK_WITH_DETAILS = "insert into new_schema.books () values (?,?,?,?,?)";
+    private static final String INSERT_BOOK_WITH_DETAILS = "insert into new_schema.books (title, pages, count, author, genre ) " +
+            "values (?,?,?,?,?)";
 
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -97,6 +98,10 @@ public class BookRepository implements BookDAO {
             params.put("pages", book.getPages());
             params.put("count", book.getQuantity());
             jdbcTemplate.update(INSERT_BOOK_WITH_DETAILS, new MapSqlParameterSource(params), keyHolder);
+
+            if (keyHolder != null) {
+                System.out.println(keyHolder.getKey());
+            }
         }
 
     }

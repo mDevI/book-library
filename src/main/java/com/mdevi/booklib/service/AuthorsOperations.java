@@ -58,7 +58,6 @@ public class AuthorsOperations {
         } catch (ParseException ex) {
             ex.printStackTrace();
         }
-        //newAuthor.setRank(1);
         System.out.println(newAuthor.toString());
         Integer idCreated =  repositoryAuthors.insert(newAuthor);
         if (idCreated != null) {

@@ -24,8 +24,12 @@ public class AuthorRepository implements AuthorDAO {
     private static final String UPDATE_AUTHOR = "update new_schema.authors set name = ?, dob = ?, rank = ? where id = ?";
     private static final String DELETE_AUTHOR_BY_ID = "delete from new_schema.authors where id = ?";
 
+    private final JdbcTemplate jdbcTemplate;
+
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    public AuthorRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Override
     public List<Author> findAll() {
