@@ -8,9 +8,11 @@ import java.util.List;
 public interface BookDAO {
     List<Book> findAll();
 
-    List<Book> findByTitle(String title);
+    List<Book> findByTitleLike(String title);
 
-    List<Book> findByAuthor(String author);
+    Book findByTitle(String title);
+
+    Book findByAuthor(String author);
 
     List<Book> findByAuthor(Author author);
 
