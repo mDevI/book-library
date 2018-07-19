@@ -40,7 +40,7 @@ public class BooksOperations {
     @ShellMethod(value = "Show all the books info.")
     public void findAllBooks() {
         List<Book> theBooks = bookDAO.findAllWithDetails();
-        printBookList(theBooks, ALL_BOOKS_BY_TITLE);
+        printBookList(theBooks, ALL_BOOKS_TITLE);
     }
 
     @ShellMethod(value = "Find the books with specified title.")
@@ -56,30 +56,62 @@ public class BooksOperations {
         printBookList(theBooks, ALL_BOOKS_BY_TITLE);
     }
 
+    @ShellMethod(value = "Find books by author name")
+    public void findBookByAuthor() {
+
+    }
+
+
+
     @ShellMethod(value = "Add new book info to the library.")
     public void addBookInfo() {
         List<Author> authors = authorDAO.findAll();
         List<Genre> genres = genreDAO.findAll();
         final Scanner sc = new Scanner(System.in);
-        printAuthorsInfo(authors);
-        System.out.print("Please, select the author ID for your new book.");
-        Integer authorId = sc.nextInt();
-        Author author = this.authorDAO.findById(authorId);
         printGenresInfo(genres);
-        System.out.print("Please, select the genre ID for your new book.");
+        System.out.print("Please, select the genre ID for your new book: ");
         Integer genreId = sc.nextInt();
         Genre genre = this.genreDAO.findById(genreId);
-        System.out.print("Please, enter the book's title.");
+        printAuthorsInfo(authors);
+        System.out.print("Please, select the author ID for your new book: ");
+        Integer authorId = sc.nextInt();
+        Author author = this.authorDAO.findById(authorId);
+        System.out.print("Please, enter the book's title: ");
         String title = sc.nextLine();
-        System.out.print("Please, enter count of pages.");
+        System.out.print("Please, enter count of pages: ");
         Integer pages = sc.nextInt();
-        System.out.print("Please, enter count of books.");
+        System.out.print("Please, enter count of books: ");
         Integer count = sc.nextInt();
         Book newBook = new Book(0, title, author, genre, pages, count);
-        this.bookDAO.insert(newBook);
+        System.out.println(newBook);
+        //this.bookDAO.insert(newBook);
     }
 
     private void printGenresInfo(List<Genre> genres) {
+        int rows = 3;
+        int columns = genres.size()%3 == 0 ? genres.size()/3 : genres.size()/3 +1 ;
+        Genre[][] genre = new Genre[rows][columns];
+        int index = 0;
+        // fill out our genres matrix
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                if(genres.size() >= index + 1) {
+                    genre[i][j] = genres.get(index);
+                } else {
+                    genre[i][j] = null;
+                }
+                index++;
+            }
+        }
+
+        for (int i = 0; i < columns; i++) {
+            for (int j = i+1; j < rows; j++) {
+                Genre temp = genre [i][j];
+                genre[i][j] = genre[j][i];
+                genre[j][i] = temp;
+            }
+        }
+
 
     }
 

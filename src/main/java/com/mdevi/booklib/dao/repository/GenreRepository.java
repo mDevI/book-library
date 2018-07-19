@@ -56,7 +56,7 @@ public class GenreRepository implements GenreDAO {
 
     @Override
     public void update(Genre genre) {
-        jdbcTemplate.update(UPDATE_GENRE, genre.getTitle());
+        jdbcTemplate.update(UPDATE_GENRE, genre.getTitle(), genre.getId());
     }
 
     @Override
