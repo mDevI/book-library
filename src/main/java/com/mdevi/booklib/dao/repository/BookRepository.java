@@ -25,21 +25,41 @@ import java.util.Map;
 public class BookRepository implements BookDAO {
 
     private static final String SELECT_ALL_FROM_BOOKS = "select * from new_schema.books order by title";
+
     private static final String SELECT_ALL_WITH_DETAILS = "select b.book_id, b.title, g.name as genre, b.pages," +
             "b.year_publishing, b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
             "from new_schema.books b left join new_schema.authors a on b.author = a.id " +
             " left join new_schema.genres g on g.id = b.genre";
+
     private static final String SELECT_ONE_BY_TITLE = "select b.book_id, b.title, g.name as genre, b.pages, " +
             "b.year_publishing, b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
             "from new_schema.books b left join new_schema.authors a on b.author = a.id " +
             " left join new_schema.genres g on g.id = b.genre where b.title = :pattern";
+
     private static final String SELECT_BOOKS_BY_TITLE_LIKE = "select b.book_id, b.title, g.name as genre, b.pages, " +
             "b.year_publishing, b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
             "from new_schema.books b left join new_schema.authors a on b.author = a.id " +
             " left join new_schema.genres g on g.id = b.genre where b.title LIKE :pattern";
+
     private static final String SELECT_BOOK_TITLE_BY_ID = "select title from new_schema.books where book_id = :id";
+
     private static final String INSERT_BOOK_WITH_DETAILS = "insert into new_schema.books (title, pages, count, author, genre ) " +
             "values (?,?,?,?,?)";
+
+    private static final String UPDATE_BOOK_WITH_DETAILS = "update new_schema.books set title = :newtitle, pages = :newpages, " +
+            "count = :newcount, author = :newauthor, genre = :newgenre where id = :id";
+
+    private static final String SELECT_BOOKS_BY_AUTHOR_LIKE = "select b.book_id, b.title, g.name as genre, b.pages, " +
+            "b.year_publishing, b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
+            "from new_schema.books b left join new_schema.authors a on b.author = a.id " +
+            "left join new_schema.genres g on g.id = b.genre where author_name LIKE :pattern";
+
+    private static final String SELECT_BOOKS_BY_AUTHOR = "select b.book_id, b.title, g.name as genre, b.pages, " +
+            "b.year_publishing, b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
+            "from new_schema.books b left join new_schema.authors a on b.author = a.id " +
+            "left join new_schema.genres g on g.id = b.genre where author_name = :pattern";
+
+    private static final String DELETE_FROM_BOOKS_BY_ID = "delete from new_schema.books where id = :id";
 
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -75,6 +95,20 @@ public class BookRepository implements BookDAO {
     }
 
     @Override
+    public List<Book> findByAuthorLike(String authorName) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("pattern", "%" + authorName + "%");
+        return jdbcTemplate.query(SELECT_BOOKS_BY_AUTHOR_LIKE, params, new BookWithDetailsExtractor());
+    }
+
+    @Override
+    public List<Book> finfByAuthor(String authorName) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("pattern", authorName);
+        return jdbcTemplate.query(SELECT_BOOKS_BY_AUTHOR, params, new BookWithDetailsExtractor());
+    }
+
+    @Override
     public List<Book> findByAuthor(Author author) {
         return null;
     }
@@ -103,17 +137,25 @@ public class BookRepository implements BookDAO {
                 System.out.println(keyHolder.getKey());
             }
         }
-
     }
 
     @Override
     public void update(Book book) {
-
+        Map<String, Object> params = new HashMap<>();
+        params.put("newtitle", book.getBookTitle());
+        params.put("newpages", book.getPages());
+        params.put("newcount", book.getQuantity());
+        params.put("newauthor", book.getAuthor().getId());
+        params.put("newgenre", book.getGenre().getId());
+        params.put("id", book.getId());
+        jdbcTemplate.update(UPDATE_BOOK_WITH_DETAILS, params);
     }
 
     @Override
     public void delete(Integer id) {
-
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", id);
+        jdbcTemplate.update(DELETE_FROM_BOOKS_BY_ID, params);
     }
 
     @Override
@@ -125,6 +167,7 @@ public class BookRepository implements BookDAO {
     public void insertWithDetails(Book book) {
 
     }
+
 
     private static final class BookWithDetailsExtractor implements ResultSetExtractor<List<Book>> {
 

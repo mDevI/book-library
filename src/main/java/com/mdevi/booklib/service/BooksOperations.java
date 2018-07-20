@@ -13,6 +13,7 @@ import org.springframework.shell.standard.ShellOption;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -57,10 +58,18 @@ public class BooksOperations {
     }
 
     @ShellMethod(value = "Find books by author name")
-    public void findBookByAuthor() {
-
+    public void findBookByAuthor(
+            @ShellOption(value = "--authorname", help = "Search the books by authors name.") String authorName,
+            @ShellOption(value = "--strictSearch", help = "Turn on a strict search.") Boolean strictSearch
+    ) {
+        List<Book> theBooks = new ArrayList<>();
+        if (strictSearch) {
+            theBooks.add(bookDAO.findByAuthor(authorName));
+        } else {
+            theBooks.addAll(bookDAO.findByAuthorLike(authorName));
+        }
+        printBookList(theBooks, ALL_BOOKS_BY_AUTHOR);
     }
-
 
 
     @ShellMethod(value = "Add new book info to the library.")
@@ -70,28 +79,34 @@ public class BooksOperations {
         final Scanner sc = new Scanner(System.in);
         printGenresInfo(genres);
         System.out.print("Please, select the genre ID for your new book: ");
-        Integer genreId = sc.nextInt();
+        Integer genreId = Integer.parseInt(sc.nextLine());
         Genre genre = this.genreDAO.findById(genreId);
         printAuthorsInfo(authors);
         System.out.print("Please, select the author ID for your new book: ");
-        Integer authorId = sc.nextInt();
+        Integer authorId = Integer.parseInt(sc.nextLine());
         Author author = this.authorDAO.findById(authorId);
         System.out.print("Please, enter the book's title: ");
         String title = sc.nextLine();
         System.out.print("Please, enter count of pages: ");
-        Integer pages = sc.nextInt();
+        Integer pages = Integer.parseInt(sc.nextLine());
         System.out.print("Please, enter count of books: ");
-        Integer count = sc.nextInt();
+        Integer count = Integer.parseInt(sc.nextLine());
         Book newBook = new Book(0, title, author, genre, pages, count);
         System.out.println(newBook);
-        //this.bookDAO.insert(newBook);
+        this.bookDAO.insert(newBook);
+    }
+
+    @ShellMethod(value = "Update the selected book info.")
+    public void updateBookInfo() {
+
     }
 
     private void printGenresInfo(List<Genre> genres) {
+        genres.sort(Comparator.comparingInt(Genre::getId));
+        int index = 0;
         int rows = 3;
         int columns = genres.size()%3 == 0 ? genres.size()/3 : genres.size()/3 +1 ;
         Genre[][] genre = new Genre[rows][columns];
-        int index = 0;
         // fill out our genres matrix
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
@@ -103,20 +118,61 @@ public class BooksOperations {
                 index++;
             }
         }
-
-        for (int i = 0; i < columns; i++) {
-            for (int j = i+1; j < rows; j++) {
-                Genre temp = genre [i][j];
-                genre[i][j] = genre[j][i];
-                genre[j][i] = temp;
+        // transpose the matrix
+        int m = genre.length;
+        int n = genre[0].length;
+        Genre transpose[][] = new Genre[n][m];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                transpose[j][i] = genre[i][j];
             }
         }
-
-
+        // print the list
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (transpose[i][j] != null) {
+                    System.out.printf(" %2d.) %23s \t\t\t", transpose[i][j].getId(), transpose[i][j].getTitle());
+                }
+            }
+            System.out.println();
+        }
     }
 
     private void printAuthorsInfo(List<Author> authors) {
-
+        authors.sort(Comparator.comparingInt(Author::getId));
+        int index = 0;
+        int rows = 4;
+        int columns = authors.size() % rows == 0 ? authors.size() / rows : authors.size() / rows + 1;
+        Author[][] author = new Author[rows][columns];
+        // fill out our authors matrix
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                if (authors.size() >= index + 1) {
+                    author[i][j] = authors.get(index);
+                } else {
+                    author[i][j] = null;
+                }
+                index++;
+            }
+        }
+        // transpose the matrix
+        int m = author.length;
+        int n = author[0].length;
+        Author transpose[][] = new Author[n][m];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                transpose[j][i] = author[i][j];
+            }
+        }
+        // print the list
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (transpose[i][j] != null) {
+                    System.out.printf(" %2d.) %23s \t\t", transpose[i][j].getId(), transpose[i][j].getName());
+                }
+            }
+            System.out.println();
+        }
     }
 
     private void printBookList(List<Book> bookList, String paragraph) {

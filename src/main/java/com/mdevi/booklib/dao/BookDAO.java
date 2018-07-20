@@ -16,6 +16,10 @@ public interface BookDAO {
 
     List<Book> findByAuthor(Author author);
 
+    List<Book> findByAuthorLike(String authorName);
+
+    List<Book> finfByAuthor(String authorName);
+
     String findTitleById(Integer id);
 
     void insert(Book book);
@@ -27,4 +31,5 @@ public interface BookDAO {
     List<Book> findAllWithDetails();
 
     void insertWithDetails(Book book);
+
 }
