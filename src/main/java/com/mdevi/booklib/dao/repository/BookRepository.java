@@ -60,6 +60,14 @@ public class BookRepository implements BookDAO {
             "left join new_schema.genres g on g.id = b.genre where author_name = :pattern";
 
     private static final String DELETE_FROM_BOOKS_BY_ID = "delete from new_schema.books where id = :id";
+    private static final String SELECT_BOOK_BY_ID = "select b.book_id, b.title, g.name as genre, b.pages, " +
+            "b.year_publishing, b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
+            "from new_schema.books b left join new_schema.authors a on b.author = a.id " +
+            " left join new_schema.genres g on g.id = b.genre where b.book_id = :id";
+    private static final String SELECT_BOOK_BY_GENRE_ID = "select b.book_id, b.title, g.name as genre, b.pages, " +
+            "b.year_publishing, b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
+            "from new_schema.books b left join new_schema.authors a on b.author = a.id " +
+            " left join new_schema.genres g on g.id = b.genre where g.id = :genre_id";
 
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -73,6 +81,14 @@ public class BookRepository implements BookDAO {
     @Override
     public List<Book> findAll() {
         return jdbcTemplate.query(SELECT_ALL_FROM_BOOKS, new BookRowMapper());
+    }
+
+    @Override
+    public Book findById(Integer id) {
+        Map<String, Integer> params = new HashMap<>(1);
+        params.put("id", id);
+        Book theBook = jdbcTemplate.query(SELECT_BOOK_BY_ID, params, new BookWithDetailsExtractor()).get(0);
+        return theBook;
     }
 
     @Override
@@ -90,11 +106,6 @@ public class BookRepository implements BookDAO {
     }
 
     @Override
-    public Book findByAuthor(String author) {
-        return null;
-    }
-
-    @Override
     public List<Book> findByAuthorLike(String authorName) {
         Map<String, Object> params = new HashMap<>();
         params.put("pattern", "%" + authorName + "%");
@@ -102,10 +113,17 @@ public class BookRepository implements BookDAO {
     }
 
     @Override
-    public List<Book> finfByAuthor(String authorName) {
+    public List<Book> findByGenreId(Integer genreId) {
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("genre_id", genreId);
+        return jdbcTemplate.query(SELECT_BOOK_BY_GENRE_ID, params, new BookWithDetailsExtractor());
+    }
+
+    @Override
+    public Book findByAuthor(String authorName) {
         Map<String, Object> params = new HashMap<>();
         params.put("pattern", authorName);
-        return jdbcTemplate.query(SELECT_BOOKS_BY_AUTHOR, params, new BookWithDetailsExtractor());
+        return jdbcTemplate.query(SELECT_BOOKS_BY_AUTHOR, params, new BookWithDetailsExtractor()).get(0);
     }
 
     @Override

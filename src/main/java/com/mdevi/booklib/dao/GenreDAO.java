@@ -9,6 +9,8 @@ public interface GenreDAO {
 
     Genre findById(Integer id);
 
+    Genre findByTitle(String title);
+
     Integer insert(Genre genre);
 
     void update(Genre genre);

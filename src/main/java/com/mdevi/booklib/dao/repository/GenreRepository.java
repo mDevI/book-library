@@ -19,6 +19,7 @@ public class GenreRepository implements GenreDAO {
 
     private static final String SELECT_ALL_FROM_GENRES = "select * from new_schema.genres order by name";
     private static final String SELECT_FROM_GENRES_BY_ID = "select * from new_schema.genres where id=?";
+    private static final String SELECT_FROM_GENRE_BY_TITLE = "select * from new_schema.genres where name=?";
     private static final String SELECT_COUNT_ALL_GENRES = "select count(*) from new_schema.genres";
     private static final String INSERT_GENRE = "insert into new_schema.genres (name) values(?)";
     private static final String UPDATE_GENRE = "update new_schema.genres set name = ? where id = ?";
@@ -39,6 +40,11 @@ public class GenreRepository implements GenreDAO {
     @Override
     public Genre findById(Integer id) {
         return jdbcTemplate.queryForObject(SELECT_FROM_GENRES_BY_ID, new Object[]{id}, new GenreRowMapper());
+    }
+
+    @Override
+    public Genre findByTitle(String title) {
+        return jdbcTemplate.queryForObject(SELECT_FROM_GENRE_BY_TITLE, new Object[]{title}, new GenreRowMapper());
     }
 
     @Override

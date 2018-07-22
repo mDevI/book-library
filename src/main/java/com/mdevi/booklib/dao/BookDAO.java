@@ -8,6 +8,8 @@ import java.util.List;
 public interface BookDAO {
     List<Book> findAll();
 
+    Book findById(Integer id);
+
     List<Book> findByTitleLike(String title);
 
     Book findByTitle(String title);
@@ -18,9 +20,10 @@ public interface BookDAO {
 
     List<Book> findByAuthorLike(String authorName);
 
-    List<Book> finfByAuthor(String authorName);
+    List<Book> findByGenreId(Integer genreId);
 
     String findTitleById(Integer id);
+
 
     void insert(Book book);
 
