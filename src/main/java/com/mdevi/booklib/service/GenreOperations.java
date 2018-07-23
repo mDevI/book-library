@@ -8,6 +8,7 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 
 @ShellComponent
 @Service
+@Transactional
 public class GenreOperations {
     private final GenreDAO genreDAO;
     private final BookDAO bookDAO;
@@ -50,6 +52,12 @@ public class GenreOperations {
         } else {
             System.out.println("A genre with id = " + id + " is not found.");
         }
+    }
+
+    @ShellMethod(value = "Find genre by title.")
+    public void findGenreByTitle(@ShellOption("--title") String title) {
+        Genre genre = genreDAO.findByTitle(title);
+        System.out.println(genre.toString());
     }
 
 
