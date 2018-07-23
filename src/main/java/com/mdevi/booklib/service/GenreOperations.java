@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ShellComponent
@@ -43,8 +44,12 @@ public class GenreOperations {
 
     @ShellMethod(value = "Find genre by Id.")
     public void findGenreById(@ShellOption("--id") Integer id) {
-        Genre theGenre = genreDAO.findById(id);
-        System.out.println(theGenre.toString());
+        Optional<Genre> theGenre = genreDAO.findById(id);
+        if (theGenre.isPresent()) {
+            System.out.println(theGenre.get().toString());
+        } else {
+            System.out.println("A genre with id = " + id + " is not found.");
+        }
     }
 
 

@@ -80,7 +80,7 @@ public class BooksOperations {
         printGenresInfo(genres);
         System.out.print("Please, select the genre ID for your new book: ");
         Integer genreId = Integer.parseInt(sc.nextLine());
-        Genre genre = this.genreDAO.findById(genreId);
+        Genre genre = this.genreDAO.findById(genreId).get();
         printAuthorsInfo(authors);
         System.out.print("Please, select the author ID for your new book: ");
         Integer authorId = Integer.parseInt(sc.nextLine());
@@ -129,7 +129,7 @@ public class BooksOperations {
             System.out.printf("Book genre ID: (%3d): ", theBook.getGenre().getId());
             Integer newBookGenre = Integer.parseInt(sc.nextLine());
             if (genreDAO.findById(newBookGenre) != null) {
-                theBook.setGenre(genreDAO.findById(newBookGenre));
+                theBook.setGenre(genreDAO.findById(newBookGenre).get());
             } else {
                 System.out.println("Bool genre with ID: " + newBookGenre + " isn't exist");
             }
@@ -237,6 +237,4 @@ public class BooksOperations {
                     "_________________________________________________________________________");
         }
     }
-
-
 }

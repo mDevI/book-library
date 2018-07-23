@@ -3,11 +3,12 @@ package com.mdevi.booklib.dao;
 import com.mdevi.booklib.model.Genre;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface GenreDAO {
     List<Genre> findAll();
 
-    Genre findById(Integer id);
+    Optional<Genre> findById(Integer id);
 
     Genre findByTitle(String title);
 

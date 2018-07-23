@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class GenreRepository implements GenreDAO {
@@ -38,13 +39,15 @@ public class GenreRepository implements GenreDAO {
     }
 
     @Override
-    public Genre findById(Integer id) {
-        return jdbcTemplate.queryForObject(SELECT_FROM_GENRES_BY_ID, new Object[]{id}, new GenreRowMapper());
+    public Optional<Genre> findById(Integer id) {
+        List<Genre> genreList = jdbcTemplate.query(SELECT_FROM_GENRES_BY_ID, new Object[]{id}, new GenreRowMapper());
+        return genreList.isEmpty() ? Optional.empty() : Optional.ofNullable(genreList.get(0));
     }
 
     @Override
     public Genre findByTitle(String title) {
-        return jdbcTemplate.queryForObject(SELECT_FROM_GENRE_BY_TITLE, new Object[]{title}, new GenreRowMapper());
+        List<Genre> genreList = jdbcTemplate.query(SELECT_FROM_GENRE_BY_TITLE, new Object[]{title}, new GenreRowMapper());
+        return genreList.isEmpty() ? null : genreList.get(0);
     }
 
     @Override
