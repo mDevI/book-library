@@ -51,7 +51,7 @@ public class AuthorsOperations {
         } catch (ParseException ex) {
             ex.printStackTrace();
         }
-        System.out.println(newAuthor.toString());
+        //System.out.println(newAuthor.toString());
         Integer idCreated = authorDAO.insert(newAuthor);
         if (idCreated != null) {
             System.out.println("A new author info has been saved successfully.");

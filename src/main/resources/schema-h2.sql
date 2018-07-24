@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS new_schema.authors
 (
 	id   int(11)      NOT NULL AUTO_INCREMENT,
 	name varchar(110) NOT NULL,
+	dob  date,
 	rank int(4)                DEFAULT NULL,
 	PRIMARY KEY (id)
 );
@@ -29,10 +30,11 @@ create table if not exists new_schema.books
 	genre           integer
 		constraint books_genres_id_fk
 		references genres,
-	year_publishing date         not null
+	year_publishing date
 );
 
 create sequence authors_id_seq;
 create sequence genres_id_seq;
 create sequence books_book_id_seq;
+
 
