@@ -8,7 +8,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,7 +15,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Repository
-@Transactional
 public class AuthorRepository implements AuthorDAO {
 
     private static final String SELECT_ALL_FROM_AUTHORS = "select * from new_schema.authors order by name";
@@ -26,16 +24,18 @@ public class AuthorRepository implements AuthorDAO {
     private static final String UPDATE_AUTHOR = "update new_schema.authors set name = ?, dob = ?, rank = ? where id = ?";
     private static final String DELETE_AUTHOR_BY_ID = "delete from new_schema.authors where id = ?";
 
+    private final JdbcTemplate jdbcTemplate;
+
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    public AuthorRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Author> findAll() {
         return jdbcTemplate.query(SELECT_ALL_FROM_AUTHORS,new AuthorRowMapper()) ;
     }
 
-    @Transactional(readOnly = true)
     @Override
     public Author findById(Integer id) {
         return jdbcTemplate.queryForObject(SELECT_FROM_AUTHORS_BY_ID, new Object[]{id},new AuthorRowMapper());

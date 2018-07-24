@@ -3,21 +3,28 @@ package com.mdevi.booklib.model;
 public class Book {
     private int id;
     private String bookTitle;
-    private String author;
-    private String genre;
+    private Author author;
+    private Genre genre;
     private int pages;
     private int quantity;
 
     public Book() {
     }
 
-    public Book(int id, String bookTitle, String author, String genre, int pages, int quantity) {
+    public Book(int id, String bookTitle, Author author, Genre genre, int pages, int quantity) {
         this.id = id;
         this.bookTitle = bookTitle;
         this.author = author;
         this.genre = genre;
         this.pages = pages;
         this.quantity = quantity;
+    }
+
+    public Book(int id, String bookTitle, Author author, Genre genre) {
+        this.id = id;
+        this.bookTitle = bookTitle;
+        this.author = author;
+        this.genre = genre;
     }
 
     public int getId() {
@@ -36,19 +43,19 @@ public class Book {
         this.bookTitle = bookTitle;
     }
 
-    public String getAuthor() {
+    public Author getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(Author author) {
         this.author = author;
     }
 
-    public String getGenre() {
+    public Genre getGenre() {
         return genre;
     }
 
-    public void setGenre(String genre) {
+    public void setGenre(Genre genre) {
         this.genre = genre;
     }
 
@@ -66,5 +73,17 @@ public class Book {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + id +
+                ", bookTitle='" + bookTitle + '\'' +
+                ", author=" + author +
+                ", genre=" + genre +
+                ", pages=" + pages +
+                ", quantity=" + quantity +
+                '}';
     }
 }
