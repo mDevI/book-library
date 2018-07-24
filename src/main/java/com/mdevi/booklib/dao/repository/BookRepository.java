@@ -27,45 +27,45 @@ public class BookRepository implements BookDAO {
     private static final String SELECT_ALL_FROM_BOOKS = "select * from new_schema.books order by title";
 
     private static final String SELECT_ALL_WITH_DETAILS = "select b.book_id, b.title, g.name as genre, b.pages," +
-            "b.year_publishing, b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
+            "b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
             "from new_schema.books b left join new_schema.authors a on b.author = a.id " +
             " left join new_schema.genres g on g.id = b.genre";
 
     private static final String SELECT_ONE_BY_TITLE = "select b.book_id, b.title, g.name as genre, b.pages, " +
-            "b.year_publishing, b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
+            "b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
             "from new_schema.books b left join new_schema.authors a on b.author = a.id " +
             " left join new_schema.genres g on g.id = b.genre where b.title = :pattern";
 
     private static final String SELECT_BOOKS_BY_TITLE_LIKE = "select b.book_id, b.title, g.name as genre, b.pages, " +
-            "b.year_publishing, b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
+            "b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
             "from new_schema.books b left join new_schema.authors a on b.author = a.id " +
             " left join new_schema.genres g on g.id = b.genre where b.title LIKE :pattern";
 
     private static final String SELECT_BOOK_TITLE_BY_ID = "select title from new_schema.books where book_id = :id";
 
     private static final String INSERT_BOOK_WITH_DETAILS = "insert into new_schema.books (title, pages, count, author, genre ) " +
-            "values (?,?,?,?,?)";
+            "values (:title,:pages,:count,:author,:genre)";
 
     private static final String UPDATE_BOOK_WITH_DETAILS = "update new_schema.books set title = :newtitle, pages = :newpages, " +
-            "count = :newcount, author = :newauthor, genre = :newgenre where id = :id";
+            "count = :newcount, author = :newauthor, genre = :newgenre where book_id = :id";
 
     private static final String SELECT_BOOKS_BY_AUTHOR_LIKE = "select b.book_id, b.title, g.name as genre, b.pages, " +
-            "b.year_publishing, b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
+            "b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
             "from new_schema.books b left join new_schema.authors a on b.author = a.id " +
             "left join new_schema.genres g on g.id = b.genre where author_name LIKE :pattern";
 
     private static final String SELECT_BOOKS_BY_AUTHOR = "select b.book_id, b.title, g.name as genre, b.pages, " +
-            "b.year_publishing, b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
+            "b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
             "from new_schema.books b left join new_schema.authors a on b.author = a.id " +
             "left join new_schema.genres g on g.id = b.genre where author_name = :pattern";
 
-    private static final String DELETE_FROM_BOOKS_BY_ID = "delete from new_schema.books where id = :id";
+    private static final String DELETE_FROM_BOOKS_BY_ID = "delete from new_schema.books where book_id = :id";
     private static final String SELECT_BOOK_BY_ID = "select b.book_id, b.title, g.name as genre, b.pages, " +
-            "b.year_publishing, b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
+            "b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
             "from new_schema.books b left join new_schema.authors a on b.author = a.id " +
             " left join new_schema.genres g on g.id = b.genre where b.book_id = :id";
     private static final String SELECT_BOOK_BY_GENRE_ID = "select b.book_id, b.title, g.name as genre, b.pages, " +
-            "b.year_publishing, b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
+            "b.count, a.id author_id, a.name author_name, a.dob author_dob, a.rank, g.id genre_id " +
             "from new_schema.books b left join new_schema.authors a on b.author = a.id " +
             " left join new_schema.genres g on g.id = b.genre where g.id = :genre_id";
 
@@ -143,17 +143,17 @@ public class BookRepository implements BookDAO {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         if(book.getAuthor().getId()>0 && book.getGenre().getId()>0) {
             Map<String, Object> params = new HashMap<>();
-            params.put("id", book.getId());
+            //params.put("id", book.getId());
             params.put("title", book.getBookTitle());
-            params.put("author", book.getAuthor().getId());
-            params.put("genre", book.getGenre().getId());
             params.put("pages", book.getPages());
             params.put("count", book.getQuantity());
-            jdbcTemplate.update(INSERT_BOOK_WITH_DETAILS, new MapSqlParameterSource(params), keyHolder);
+            params.put("author", book.getAuthor().getId());
+            params.put("genre", book.getGenre().getId());
+            jdbcTemplate.update(INSERT_BOOK_WITH_DETAILS, new MapSqlParameterSource(params), keyHolder, new String[]{"book_id"});
 
-            if (keyHolder != null) {
-                System.out.println(keyHolder.getKey());
-            }
+/*            if (keyHolder.getKeys().size() > 1) {
+                System.out.println(keyHolder.getKeys().get("book_id"));
+            }*/
         }
     }
 
@@ -234,7 +234,6 @@ public class BookRepository implements BookDAO {
             theBook.setBookTitle(resultSet.getString("title"));
             theBook.setPages(resultSet.getInt("pages"));
             theBook.setQuantity(resultSet.getInt("count"));
-
             return theBook;
         }
     }

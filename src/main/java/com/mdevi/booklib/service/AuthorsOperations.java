@@ -4,32 +4,29 @@ import com.mdevi.booklib.dao.AuthorDAO;
 import com.mdevi.booklib.dao.repository.AuthorRepository;
 import com.mdevi.booklib.model.Author;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.NotNull;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Scanner;
 
-@ShellComponent
 @Service
+@Transactional
 public class AuthorsOperations {
 
-    private final AuthorDAO repositoryAuthors;
+    private final AuthorDAO authorDAO;
 
     @Autowired
     public AuthorsOperations(AuthorRepository repository) {
-        this.repositoryAuthors = repository;
+        this.authorDAO = repository;
     }
 
-    @ShellMethod(value = "Show all books authors info.", key = "get-all-authors")
+    @Transactional(readOnly = true)
     public void showAuthors(){
-        List<Author> authors = repositoryAuthors.findAll();
+        List<Author> authors = authorDAO.findAll();
         if (authors != null && authors.size()>0) {
             System.out.println("_______________________        Authors       _______________________");
             System.out.printf("| %2s | %40s | %10s | %4s |\n", "ID", "NAME", "DATE-BIRTH", "RANK");
@@ -38,15 +35,11 @@ public class AuthorsOperations {
                         author.getId(),author.getName(), author.getDateOfBirth().toString(),author.getRank());
             }
             System.out.println("_______________________        Authors       _______________________");
-            System.out.printf("Total %3d authors found.\n", repositoryAuthors.count());
-
+            System.out.printf("Total %3d authors found.\n", authorDAO.count());
         }
     }
 
-    @ShellMethod(value = "Add new author info.", key = "add-new-author")
-    public void addNewAuthor(
-            @ShellOption(value = "--name", help = "--name \"author-full-name\"", arity = 1) @NotNull String name,
-            @ShellOption(value = "--dateBirth", help = "--dateBirth \"dd-MM-yyyy\"", arity = 1) @NotNull String dob) {
+    public void addNewAuthor(String name, String dob) {
         Author newAuthor = new Author();
         newAuthor.setName(name);
 
@@ -59,23 +52,21 @@ public class AuthorsOperations {
             ex.printStackTrace();
         }
         System.out.println(newAuthor.toString());
-        Integer idCreated =  repositoryAuthors.insert(newAuthor);
+        Integer idCreated = authorDAO.insert(newAuthor);
         if (idCreated != null) {
             System.out.println("A new author info has been saved successfully.");
-            System.out.println(repositoryAuthors.findById(idCreated).toString());
+            System.out.println(authorDAO.findById(idCreated).toString());
         } else {
             System.out.println("An author info hasn't been saved.");
         }
     }
-    @ShellMethod(value = "Delete the selected author by it's ID.", key = "delete-by-id")
-    public void deleteAuthor(
-            @ShellOption(value = "--id", help = "--id number", arity = 1) Integer id) {
-        repositoryAuthors.deleteById(id);
+
+    public void deleteAuthor(Integer id) {
+        authorDAO.deleteById(id);
     }
 
-    @ShellMethod(value = "Update author's info.", key = "update-author-info")
-    public void updateAuthorByID(@ShellOption Integer id){
-        Author selectedAuthor = repositoryAuthors.findById(id);
+    public void updateAuthorByID(Integer id) {
+        Author selectedAuthor = authorDAO.findById(id);
         if (selectedAuthor != null) {
 
             System.out.println("Please enter new author's info step by step.");
@@ -98,7 +89,7 @@ public class AuthorsOperations {
             System.out.print("\nAre you sure to save it? (Y)es or (N)o : ");
             String answerToModify =  sc.next();
             if (answerToModify.toUpperCase().equals("Y")){
-                repositoryAuthors.update(selectedAuthor);
+                authorDAO.update(selectedAuthor);
                 System.out.println("The author's info has been updated.");
             }
         }

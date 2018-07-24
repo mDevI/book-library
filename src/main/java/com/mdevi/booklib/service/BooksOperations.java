@@ -7,22 +7,20 @@ import com.mdevi.booklib.model.Author;
 import com.mdevi.booklib.model.Book;
 import com.mdevi.booklib.model.Genre;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
-@ShellComponent
 @Service
+@Transactional
 public class BooksOperations {
 
     private static final String ALL_BOOKS_TITLE = " ALL BOOKS INFO. ";
-    private static final String BOOK_BY_ID = " ALL BOOKS BY ID. ";
+    private static final String BOOK_BY_ID = " THE BOOK BY ID. ";
     private static final String ALL_BOOKS_BY_TITLE = " ALL BOOKS BY TITLE. ";
     private static final String ALL_BOOKS_BY_AUTHOR = "ALL BOOKS BY AUTHOR. ";
     private static final String ALL_BOOKS_BY_GENRE = "ALL BOOKS BY GENRE.";
@@ -38,16 +36,14 @@ public class BooksOperations {
         this.genreDAO = genreDAO;
     }
 
-    @ShellMethod(value = "Show all the books info.")
+    @Transactional(readOnly = true)
     public void findAllBooks() {
         List<Book> theBooks = bookDAO.findAllWithDetails();
         printBookList(theBooks, ALL_BOOKS_TITLE);
     }
 
-    @ShellMethod(value = "Find the books with specified title.")
-    public void findBookByTitle(
-            @ShellOption(value = "--title", help = "Search the books by title.") String titlePattern,
-            @ShellOption(value = "--strictSearch", help = "An option is used to turn on a strict search.") Boolean searchStrongOption) {
+    @Transactional(readOnly = true)
+    public void findBookByTitle(String titlePattern, Boolean searchStrongOption) {
         List<Book> theBooks = new ArrayList<>();
         if (searchStrongOption) {
             theBooks.add(bookDAO.findByTitle(titlePattern));
@@ -57,11 +53,8 @@ public class BooksOperations {
         printBookList(theBooks, ALL_BOOKS_BY_TITLE);
     }
 
-    @ShellMethod(value = "Find books by author name")
-    public void findBookByAuthor(
-            @ShellOption(value = "--authorname", help = "Search the books by authors name.") String authorName,
-            @ShellOption(value = "--strictSearch", help = "Turn on a strict search.") Boolean strictSearch
-    ) {
+    @Transactional(readOnly = true)
+    public void findBookByAuthor(String authorName, Boolean strictSearch) {
         List<Book> theBooks = new ArrayList<>();
         if (strictSearch) {
             theBooks.add(bookDAO.findByAuthor(authorName));
@@ -71,8 +64,6 @@ public class BooksOperations {
         printBookList(theBooks, ALL_BOOKS_BY_AUTHOR);
     }
 
-
-    @ShellMethod(value = "Add new book info to the library.")
     public void addBookInfo() {
         List<Author> authors = authorDAO.findAll();
         List<Genre> genres = genreDAO.findAll();
@@ -92,16 +83,22 @@ public class BooksOperations {
         System.out.print("Please, enter count of books: ");
         Integer count = Integer.parseInt(sc.nextLine());
         Book newBook = new Book(0, title, author, genre, pages, count);
-        System.out.println(newBook);
-        this.bookDAO.insert(newBook);
+        // final show the books details.
+        System.out.println("A new book's info is: " + newBook.toString());
+        System.out.println();
+        System.out.print("\nAre you sure to save it? (Y)es or (N)o : ");
+        String answerToModify = sc.next();
+        if (answerToModify.toUpperCase().equals("Y")) {
+            this.bookDAO.insert(newBook);
+            System.out.println("The book's info has been saved.");
+        }
     }
 
-    @ShellMethod(value = "Update the selected book info.")
-    public void updateBookInfo(@ShellOption(value = "--bookID", help = "Given book ID.") Integer bookId) {
+    public void updateBookInfo(Integer bookId) {
         Book theBook = bookDAO.findById(bookId);
         if (theBook != null && theBook.getId() > 0) {
 
-            System.out.println("Please enter new book's info step by step.");
+            System.out.println("Please enter new book's info step by step. All values are mandatory.");
             final Scanner sc = new Scanner(System.in);
             System.out.print("Book title: (" + theBook.getBookTitle() + "): ");
             String newBookTitle = sc.nextLine();
@@ -123,7 +120,6 @@ public class BooksOperations {
                 theBook.setAuthor(authorDAO.findById(newBookAuthor));
             } else {
                 System.out.println("Author with ID: " + newBookAuthor + " isn't exist.");
-
             }
 
             System.out.printf("Book genre ID: (%3d): ", theBook.getGenre().getId());
@@ -133,7 +129,7 @@ public class BooksOperations {
             } else {
                 System.out.println("Bool genre with ID: " + newBookGenre + " isn't exist");
             }
-
+            // final show book's info.
             System.out.println("Modified book's info is: " + theBook.toString());
             System.out.println();
             System.out.print("\nAre you sure to save it? (Y)es or (N)o : ");
@@ -145,8 +141,7 @@ public class BooksOperations {
         }
     }
 
-    @ShellMethod(value = "Delete the selected book.")
-    public void deleteBookById(@ShellOption(value = "--id", help = "Select the ID to delete selected book's info.") Integer id) {
+    public void deleteBookById(Integer id) {
         bookDAO.delete(id);
     }
 
@@ -158,16 +153,7 @@ public class BooksOperations {
         int columns = genres.size() % 3 == 0 ? genres.size() / 3 : genres.size() / 3 + 1;
         Genre[][] genre = new Genre[rows][columns];
         // fill out our genres matrix
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                if (genres.size() >= index + 1) {
-                    genre[i][j] = genres.get(index);
-                } else {
-                    genre[i][j] = null;
-                }
-                index++;
-            }
-        }
+        fillOutMatrix(genres, index, rows, columns, genre);
         // transpose the matrix
         int m = genre.length;
         int n = genre[0].length;
@@ -181,10 +167,23 @@ public class BooksOperations {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
                 if (transpose[i][j] != null) {
-                    System.out.printf(" %2d.) %23s \t\t\t", transpose[i][j].getId(), transpose[i][j].getTitle());
+                    System.out.printf(" %2d.--> %23s \t\t\t", transpose[i][j].getId(), transpose[i][j].getTitle());
                 }
             }
             System.out.println();
+        }
+    }
+
+    private void fillOutMatrix(List<?> listItems, int index, int rows, int columns, Object[][] arrayEntity) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                if (listItems.size() >= index + 1) {
+                    arrayEntity[i][j] = listItems.get(index);
+                } else {
+                    arrayEntity[i][j] = null;
+                }
+                index++;
+            }
         }
     }
 
@@ -195,16 +194,7 @@ public class BooksOperations {
         int columns = authors.size() % rows == 0 ? authors.size() / rows : authors.size() / rows + 1;
         Author[][] author = new Author[rows][columns];
         // fill out our authors matrix
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                if (authors.size() >= index + 1) {
-                    author[i][j] = authors.get(index);
-                } else {
-                    author[i][j] = null;
-                }
-                index++;
-            }
-        }
+        fillOutMatrix(authors, index, rows, columns, author);
         // transpose the matrix
         int m = author.length;
         int n = author[0].length;
