@@ -1,7 +1,16 @@
 package com.mdevi.booklib.model;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "genres", schema = "new_schema")
 public class Genre {
+
+    @Id
+    @SequenceGenerator(name = "Genre_gen", sequenceName = "genres_id_seq")
+    @GeneratedValue(generator = "Genre_gen")
     private int id;
+    @Column(name = "name", nullable = false)
     private String title;
 
     public Genre() {

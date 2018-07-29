@@ -1,11 +1,24 @@
 package com.mdevi.booklib.model;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "books", schema = "new_schema")
 public class Book {
+    @Id
+    @SequenceGenerator(name = "book_gen", sequenceName = "books_id_seq")
+    @GeneratedValue(generator = "book_gen")
+    @Column(name = "book_id")
     private int id;
+    @Column(name = "title")
     private String bookTitle;
+    @ManyToOne
     private Author author;
+    @ManyToOne
     private Genre genre;
+    @Column(name = "pages")
     private int pages;
+    @Column(name = "count")
     private int quantity;
 
     public Book() {

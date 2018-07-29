@@ -1,13 +1,28 @@
 package com.mdevi.booklib.model;
 
+import javax.persistence.*;
 import java.sql.Date;
 import java.util.List;
 
+@Entity
+@Table(name = "authors", schema = "new_schema")
 public class Author {
+    @Id
+    @SequenceGenerator(name = "Author_gen", sequenceName = "authors_id_seq")
+    @GeneratedValue(generator = "Author_gen")
     private int id;
+
+    @Column(name = "name", unique = true, length = 110)
     private String name;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "dob")
     private Date dateOfBirth;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Book> books;
+
+    @Column(name = "rank")
     private int rank;
 
     public Author() {

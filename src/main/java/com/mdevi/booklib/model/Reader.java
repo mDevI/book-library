@@ -1,24 +1,26 @@
 package com.mdevi.booklib.model;
 
-import java.sql.Date;
+import javax.persistence.*;
 
+@Entity
+@Table(name = "readers", schema = "new_schema")
 public class Reader {
+    @Id
+    @SequenceGenerator(name = "reader_gen", sequenceName = "readers_reader_id_seq")
+    @GeneratedValue(generator = "reader_gen")
+    @Column(name = "reader_id")
     private int id;
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
-    private boolean gender;
-    private Date dob;
-    private int point;
+    @Column(name = "rank")
+    private int rank;
+    @Column(name = "discount")
+    private byte discount_point;
+
 
     public Reader() {
     }
 
-    public Reader(int id, String name, boolean gender, Date dob, int point) {
-        this.id = id;
-        this.name = name;
-        this.gender = gender;
-        this.dob = dob;
-        this.point = point;
-    }
 
     public int getId() {
         return id;
@@ -36,27 +38,5 @@ public class Reader {
         this.name = name;
     }
 
-    public boolean isGender() {
-        return gender;
-    }
 
-    public void setGender(boolean gender) {
-        this.gender = gender;
-    }
-
-    public Date getDob() {
-        return dob;
-    }
-
-    public void setDob(Date dob) {
-        this.dob = dob;
-    }
-
-    public int getPoint() {
-        return point;
-    }
-
-    public void setPoint(int point) {
-        this.point = point;
-    }
 }
