@@ -33,6 +33,17 @@ create table if not exists new_schema.books
 	year_publishing date
 );
 
+create table if not exists new_schema.comments
+(
+  id        integer not null
+    constraint comments_pkey
+    primary key,
+  comment   varchar(200),
+  rating    integer,
+  book_id   integer not null,
+  reader_id integer not null
+);
+
 create sequence authors_id_seq;
 create sequence genres_id_seq;
 create sequence books_book_id_seq;

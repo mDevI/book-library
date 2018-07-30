@@ -1,15 +1,17 @@
 package com.mdevi.booklib.model;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "authors", schema = "new_schema")
 public class Author {
     @Id
-    @SequenceGenerator(name = "Author_gen", sequenceName = "authors_id_seq")
-    @GeneratedValue(generator = "Author_gen")
+//    @SequenceGenerator(name = "Author_gen", sequenceName = "authors_id_seq")
+//    @GeneratedValue(generator = "Author_gen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
 
     @Column(name = "name", unique = true, length = 110)
@@ -19,7 +21,7 @@ public class Author {
     @Column(name = "dob")
     private Date dateOfBirth;
 
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "author", orphanRemoval = true)
     private List<Book> books;
 
     @Column(name = "rank")
@@ -79,7 +81,7 @@ public class Author {
         return "Author{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", dateOfBirth=" + dateOfBirth +
+                ", dateOfBirth=" + dateOfBirth.toString() +
                 ", rank=" + rank +
                 '}';
     }

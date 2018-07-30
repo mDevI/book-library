@@ -1,9 +1,19 @@
 package com.mdevi.booklib.shell;
 
-//@ShellComponent
+import com.mdevi.booklib.service.AuthorsOperations;
+import com.mdevi.booklib.service.BooksOperations;
+import com.mdevi.booklib.service.GenreOperations;
+import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
+
+import javax.validation.constraints.NotNull;
+
+@ShellComponent
 public class AppCommand {
 
-/*    private final AuthorsOperations authorsOperations;
+
+    private final AuthorsOperations authorsOperations;
     private final BooksOperations booksOperations;
     private final GenreOperations genreOperations;
 
@@ -24,18 +34,25 @@ public class AppCommand {
             @ShellOption(value = "--dateBirth", help = "--dateBirth \"dd-MM-yyyy\"", arity = 1) @NotNull String dob
     ) {
         authorsOperations.addNewAuthor(name, dob);
-    }*/
+    }
 
-/*    @ShellMethod(value = "Delete the selected author by it's ID.", key = "delete-by-id", group = "Author operations")
+    @ShellMethod(value = "Find author by ID.", key = "find-author-by-id", group = "Author operations")
+    public void findAuthor(
+            @ShellOption(value = "--id", help = "--id author_id") @NotNull Integer id
+    ) {
+        authorsOperations.findById(id);
+    }
+
+    @ShellMethod(value = "Delete the selected author by it's ID.", key = "delete-author-by-id", group = "Author operations")
     public void deleteAuthor(
             @ShellOption(value = "--id", help = "--id number", arity = 1) Integer id) {
         authorsOperations.deleteAuthor(id);
-    } */
+    }
 
-/*    @ShellMethod(value = "Update author's info.", key = "update-author-info", group = "Author operations")
+    @ShellMethod(value = "Update author's info.", key = "update-author-info", group = "Author operations")
     public void updateAuthorByID(@ShellOption Integer id) {
         authorsOperations.updateAuthorByID(id);
-    }*/
+    }
 
 /*    @ShellMethod(value = "Show all genres.", key = "show-all-genres", group = "Genre operations")
     public void findAllGenres() {
