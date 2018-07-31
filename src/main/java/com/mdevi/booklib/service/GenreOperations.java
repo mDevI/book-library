@@ -63,7 +63,7 @@ public class GenreOperations {
     public void addNewGenre(String genreToAdd) {
         Genre newGenre = new Genre();
         newGenre.setTitle(genreToAdd);
-        Optional<Genre> genre = Optional.ofNullable(genreDAO.findByTitle(genreToAdd));
+        Optional<Genre> genre = genreDAO.findByTitle(genreToAdd);
         if (!genre.isPresent()) {
             if (genreDAO.insert(newGenre) > 0) {
                 System.out.println("New genre has been saved.");

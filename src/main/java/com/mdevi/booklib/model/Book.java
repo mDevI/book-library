@@ -6,16 +6,14 @@ import javax.persistence.*;
 @Table(name = "books", schema = "new_schema")
 public class Book {
     @Id
-    //@SequenceGenerator(name = "book_gen", sequenceName = "books_id_seq")
-    //@GeneratedValue(generator = "book_gen")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "book_id")
     private int id;
     @Column(name = "title")
     private String bookTitle;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL)
     private Author author;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL)
     private Genre genre;
     @Column(name = "pages")
     private int pages;
@@ -25,20 +23,12 @@ public class Book {
     public Book() {
     }
 
-    public Book(int id, String bookTitle, Author author, Genre genre, int pages, int quantity) {
-        this.id = id;
+    public Book(String bookTitle, Author author, Genre genre, int pages, int quantity) {
         this.bookTitle = bookTitle;
         this.author = author;
         this.genre = genre;
         this.pages = pages;
         this.quantity = quantity;
-    }
-
-    public Book(int id, String bookTitle, Author author, Genre genre) {
-        this.id = id;
-        this.bookTitle = bookTitle;
-        this.author = author;
-        this.genre = genre;
     }
 
     public int getId() {
@@ -94,8 +84,6 @@ public class Book {
         return "Book{" +
                 "id=" + id +
                 ", bookTitle='" + bookTitle + '\'' +
-                ", author=" + author +
-                ", genre=" + genre +
                 ", pages=" + pages +
                 ", quantity=" + quantity +
                 '}';

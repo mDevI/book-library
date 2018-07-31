@@ -83,7 +83,7 @@ public class BooksOperations {
         Integer pages = Integer.parseInt(sc.nextLine());
         System.out.print("Please, enter count of books: ");
         Integer count = Integer.parseInt(sc.nextLine());
-        Book newBook = new Book(0, title, author, genre, pages, count);
+        Book newBook = new Book(title, author, genre, pages, count);
         // final show the books details.
         System.out.println("A new book's info is: " + newBook.toString());
         System.out.println();

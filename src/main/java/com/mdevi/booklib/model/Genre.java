@@ -7,9 +7,10 @@ import javax.persistence.*;
 public class Genre {
 
     @Id
-    @SequenceGenerator(name = "Genre_gen", sequenceName = "genres_id_seq")
-    @GeneratedValue(generator = "Genre_gen")
-    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@SequenceGenerator(name = "Genre_gen", sequenceName = "genres_id_seq")
+    //@GeneratedValue(generator = "Genre_gen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
     @Column(name = "name", nullable = false)
     private String title;
