@@ -6,15 +6,16 @@ import javax.persistence.*;
 @Table(name = "books", schema = "new_schema")
 public class Book {
     @Id
-    @SequenceGenerator(name = "book_gen", sequenceName = "books_id_seq")
-    @GeneratedValue(generator = "book_gen")
+    //@SequenceGenerator(name = "book_gen", sequenceName = "books_id_seq")
+    //@GeneratedValue(generator = "book_gen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "book_id")
     private int id;
     @Column(name = "title")
     private String bookTitle;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Author author;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Genre genre;
     @Column(name = "pages")
     private int pages;

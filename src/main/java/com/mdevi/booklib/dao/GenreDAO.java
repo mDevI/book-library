@@ -10,7 +10,7 @@ public interface GenreDAO {
 
     Optional<Genre> findById(Integer id);
 
-    Genre findByTitle(String title);
+    Optional<Genre> findByTitle(String title);
 
     Integer insert(Genre genre);
 

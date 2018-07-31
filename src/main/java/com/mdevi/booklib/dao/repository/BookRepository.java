@@ -1,9 +1,102 @@
 package com.mdevi.booklib.dao.repository;
 
+import com.mdevi.booklib.dao.BookDAO;
+import com.mdevi.booklib.model.Author;
+import com.mdevi.booklib.model.Book;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import java.util.List;
+
 @Repository
-public class BookRepository {
+public class BookRepository implements BookDAO {
+
+    @PersistenceContext
+    private EntityManager em;
+
+    @Override
+    public List<Book> findAll() {
+        TypedQuery<Book> query = em.createQuery("select b from Book b", Book.class);
+        return query.getResultList();
+    }
+
+    @Override
+    public Book findById(Integer id) {
+        return em.find(Book.class, id);
+    }
+
+    @Override
+    public List<Book> findByTitleLike(String title) {
+        TypedQuery<Book> queryByTitleLike = em.createQuery("select b from Book b where b.title like :titlePattern", Book.class)
+                .setParameter("titlePattern", "%" + title + "%");
+        return queryByTitleLike.getResultList();
+    }
+
+    @Override
+    public Book findByTitle(String title) {
+        TypedQuery<Book> queryByTitle = em.createQuery("select b from Book b where b.title = :title", Book.class)
+                .setParameter("title", title);
+        return queryByTitle.getSingleResult();
+    }
+
+    @Override
+    public Book findByAuthor(String author) {
+        TypedQuery<Book> queryByAuthor = em.createQuery("select b from Book b join fetch Author a where a.name = :authorName", Book.class)
+                .setParameter("authorName", author);
+        return queryByAuthor.getSingleResult();
+    }
+
+    @Override
+    public List<Book> findByAuthor(Author author) {
+        TypedQuery<Book> queryByAuthor = em.createQuery("select b from Book b join fetch Author a where a.name = :authorName", Book.class)
+                .setParameter("authorName", author.getName());
+        return queryByAuthor.getResultList();
+    }
+
+    @Override
+    public List<Book> findByAuthorLike(String authorName) {
+        TypedQuery<Book> queryByAuthorLike = em.createQuery("select b from Book b join fetch Author a where a.name LIKE :authorName", Book.class)
+                .setParameter("authorName", "%" + authorName + "%");
+        return queryByAuthorLike.getResultList();
+    }
+
+    @Override
+    public List<Book> findByGenreId(Integer genreId) {
+
+        return null;
+    }
+
+    @Override
+    public String findTitleById(Integer id) {
+        return null;
+    }
+
+    @Override
+    public void insert(Book book) {
+
+    }
+
+    @Override
+    public void update(Book book) {
+
+    }
+
+    @Override
+    public void delete(Integer id) {
+
+    }
+
+    @Override
+    public List<Book> findAllWithDetails() {
+        return null;
+    }
+
+    @Override
+    public void insertWithDetails(Book book) {
+
+    }
 
 //    private static final String SELECT_ALL_FROM_BOOKS = "select * from new_schema.books order by title";
 //

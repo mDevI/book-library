@@ -29,10 +29,10 @@ public class GenreRepository implements GenreDAO {
     }
 
     @Override
-    public Genre findByTitle(String title) {
-        TypedQuery<Genre> query = em.createQuery("select g from Genre g where g.name = :name", Genre.class)
+    public Optional<Genre> findByTitle(String title) {
+        TypedQuery<Genre> query = em.createQuery("select g from Genre g where g.title = :name", Genre.class)
                 .setParameter("name", title);
-        return query.getSingleResult();
+        return Optional.ofNullable(query.getSingleResult());
     }
 
     @Override

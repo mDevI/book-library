@@ -54,43 +54,43 @@ public class AppCommand {
         authorsOperations.updateAuthorByID(id);
     }
 
-/*    @ShellMethod(value = "Show all genres.", key = "show-all-genres", group = "Genre operations")
+    @ShellMethod(value = "Show all genres.", key = "show-all-genres", group = "Genre operations")
     public void findAllGenres() {
         genreOperations.findAllGenres();
-    }*/
+    }
 
-/*    @ShellMethod(value = "Find genre by Id.", key = "find-genre-by-id", group = "Genre operations")
+    @ShellMethod(value = "Find genre by Id.", key = "find-genre-by-id", group = "Genre operations")
     public void findGenreById(@ShellOption("--id") Integer id) {
         genreOperations.findGenreById(id);
-    }*/
+    }
 
-/*    @ShellMethod(value = "Find genre by title.", key = "find-genre-by-title", group = "Genre operations")
+    @ShellMethod(value = "Find genre by title.", key = "find-genre-by-title", group = "Genre operations")
     public void findGenreByTitle(@ShellOption("--title") String title) {
         genreOperations.findGenreByTitle(title);
-    }*/
+    }
 
 
-/*    @ShellMethod(value = "Add a new genre.", key = "add-new-genre", group = "Genre operations")
+    @ShellMethod(value = "Add a new genre.", key = "add-new-genre", group = "Genre operations")
     public void addNewGenre(@ShellOption(value = "--genre", help = "--genre \"genre-title\"", arity = 1) String genreToAdd) {
         genreOperations.addNewGenre(genreToAdd);
-    }*/
+    }
 
-/*    @ShellMethod(value = "Delete the genre.", key = "delete-genre", group = "Genre operations")
+    @ShellMethod(value = "Delete the genre.", key = "delete-genre", group = "Genre operations")
     public void deleteGenreById(@ShellOption(value = "--id", help = "Select the id to delete the genre.") Integer id) {
         genreOperations.deleteGenreById(id);
-    }*/
+    }
 
-/*    @ShellMethod(value = "Show all the books info.", key = "show-all-books", group = "Books operations")
+    @ShellMethod(value = "Show all the books info.", key = "show-all-books", group = "Books operations")
     public void findAllBooks() {
         booksOperations.findAllBooks();
-    }*/
+    }
 
-/*    @ShellMethod(value = "Find the books with specified title.", key = "find-by-title", group = "Books operations")
+    @ShellMethod(value = "Find the books with specified title.", key = "find-by-title", group = "Books operations")
     public void findBookByTitle(
             @ShellOption(value = "--title", help = "Search the books by title.") String titlePattern,
             @ShellOption(value = "--strictSearch", help = "An option is used to turn on a strict search.") Boolean isStrictSearch) {
         booksOperations.findBookByTitle(titlePattern, isStrictSearch);
-    }*/
+    }
 
 /*    @ShellMethod(value = "Find books by author name", key = "find-by-author", group = "Books operations")
     public void findBookByAuthor(

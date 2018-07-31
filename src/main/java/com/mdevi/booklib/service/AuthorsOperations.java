@@ -16,16 +16,16 @@ import java.util.Scanner;
 @Service
 @Transactional
 public class AuthorsOperations {
-//
-private final AuthorDAO authorDAO;
 
-    //
+    private final AuthorDAO authorDAO;
+
+
     @Autowired
     public AuthorsOperations(AuthorRepository repository) {
         this.authorDAO = repository;
     }
 
-    //
+
     @Transactional(readOnly = true)
     public void showAuthors() {
         List<Author> authors = authorDAO.findAll();
