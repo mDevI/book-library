@@ -90,12 +90,20 @@ public class BookRepository implements BookDAO {
 
     @Override
     public List<Book> findAllWithDetails() {
-        return null;
+        TypedQuery<Book> query = em.createQuery("select b from Book b", Book.class);
+        return query.getResultList();
     }
 
     @Override
     public void insertWithDetails(Book book) {
 
+    }
+
+    @Override
+    public List<Book> findBooksByGenre(String genre) {
+        TypedQuery<Book> query = em.createQuery("select b from Book b join fetch Genre g where g.title = :title", Book.class)
+                .setParameter("title", genre);
+        return query.getResultList();
     }
 
 //    private static final String SELECT_ALL_FROM_BOOKS = "select * from new_schema.books order by title";

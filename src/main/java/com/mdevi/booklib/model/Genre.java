@@ -1,6 +1,7 @@
 package com.mdevi.booklib.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "genres", schema = "new_schema")
@@ -14,6 +15,10 @@ public class Genre {
     private int id;
     @Column(name = "name", nullable = false)
     private String title;
+
+    @OneToMany(mappedBy = "genre",
+            cascade = {CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH})
+    private List<Book> books;
 
     public Genre() {
     }
@@ -37,6 +42,14 @@ public class Genre {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(List<Book> books) {
+        this.books = books;
     }
 
     @Override

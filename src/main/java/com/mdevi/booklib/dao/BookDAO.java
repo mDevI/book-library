@@ -35,4 +35,6 @@ public interface BookDAO {
 
     void insertWithDetails(Book book);
 
+    List<Book> findBooksByGenre(String genre);
+
 }

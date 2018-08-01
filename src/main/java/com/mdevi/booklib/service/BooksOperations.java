@@ -146,6 +146,12 @@ public class BooksOperations {
         bookDAO.delete(id);
     }
 
+    public void findBooksByGenre(String genreTitle) {
+        List<Book> booksByGenre = bookDAO.findBooksByGenre(genreTitle);
+        if (booksByGenre.size() > 0) {
+            printBookList(booksByGenre, ALL_BOOKS_BY_GENRE);
+        }
+    }
 
     private void printGenresInfo(List<Genre> genres) {
         genres.sort(Comparator.comparingInt(Genre::getId));

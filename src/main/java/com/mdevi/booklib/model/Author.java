@@ -21,7 +21,6 @@ public class Author {
     @Column(name = "dob")
     private Date dateOfBirth;
 
-
     @OneToMany(mappedBy = "author",
             cascade = {CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH})
     private List<Book> books;

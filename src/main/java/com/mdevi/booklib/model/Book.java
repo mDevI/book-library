@@ -11,9 +11,11 @@ public class Book {
     private int id;
     @Column(name = "title")
     private String bookTitle;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH, CascadeType.MERGE})
+    @JoinColumn(name = "author")
     private Author author;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH, CascadeType.MERGE})
+    @JoinColumn(name = "genre")
     private Genre genre;
     @Column(name = "pages")
     private int pages;

@@ -92,13 +92,20 @@ public class AppCommand {
         booksOperations.findBookByTitle(titlePattern, isStrictSearch);
     }
 
-/*    @ShellMethod(value = "Find books by author name", key = "find-by-author", group = "Books operations")
+    @ShellMethod(value = "Find books by author name", key = "find-by-author", group = "Books operations")
     public void findBookByAuthor(
             @ShellOption(value = "--authorname", help = "Search the books by authors name.") String authorName,
             @ShellOption(value = "--strictSearch", help = "Turn on a strict search.") Boolean strictSearch) {
         booksOperations.findBookByAuthor(authorName, strictSearch);
-    }*/
-/*
+    }
+
+    @ShellMethod(value = "Find books by genre.", key = "find-books-by-genre", group = "Books operations")
+    public void findBooksByGenre(
+            @ShellOption(value = "--genre") String genrePattern
+    ) {
+        booksOperations.findBooksByGenre(genrePattern);
+    }
+
     @ShellMethod(value = "Add new book info to the library.", key = "add-book", group = "Books operations")
     public void addBookInfo() {
         booksOperations.addBookInfo();
@@ -107,14 +114,12 @@ public class AppCommand {
     @ShellMethod(value = "Update the selected book info.", key = "update-book", group = "Books operations")
     public void updateBookInfo(@ShellOption(value = "--bookID", help = "Given book ID.") Integer bookId) {
         booksOperations.updateBookInfo(bookId);
-    }*/
+    }
 
-/*
     @ShellMethod(value = "Delete the selected book.", key = "delete-book", group = "Books operations")
     public void deleteBookById(@ShellOption(value = "--id", help = "Select the ID to delete selected book's info.") Integer id) {
         booksOperations.deleteBookById(id);
     }
-*/
 
 
 }
