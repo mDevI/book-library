@@ -37,7 +37,7 @@ public class AuthorRepository implements AuthorDAO {
 
     @Override
     public void update(Author author) {
-        em.merge(author);
+        em.persist(author);
     }
 
     @Override
@@ -57,6 +57,5 @@ public class AuthorRepository implements AuthorDAO {
     public int count() {
         return em.createQuery("select a from Author a", Author.class).getResultList().size();
     }
-
 
 }

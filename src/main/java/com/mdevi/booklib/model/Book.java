@@ -7,7 +7,7 @@ import javax.persistence.*;
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "book_id")
+    @Column(name = "book_id", unique = true, nullable = false)
     private int id;
     @Column(name = "title")
     private String bookTitle;
@@ -26,6 +26,7 @@ public class Book {
     }
 
     public Book(String bookTitle, Author author, Genre genre, int pages, int quantity) {
+        this.id = 0;
         this.bookTitle = bookTitle;
         this.author = author;
         this.genre = genre;

@@ -38,7 +38,6 @@ public class GenreRepository implements GenreDAO {
         } else {
             return Optional.ofNullable((Genre) results.get(0));
         }
-        //return Optional.ofNullable(query.getSingleResult());
     }
 
     @Override
@@ -61,7 +60,8 @@ public class GenreRepository implements GenreDAO {
     @Override
     public void deleteById(Integer id) {
         Optional<Genre> theGenre = this.findById(id);
-        if (theGenre.isPresent()) em.remove(theGenre);
+        theGenre.ifPresent(genre -> em.remove(genre));
+
     }
 
     @Override

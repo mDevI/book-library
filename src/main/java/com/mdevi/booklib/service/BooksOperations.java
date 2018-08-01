@@ -65,6 +65,7 @@ public class BooksOperations {
         printBookList(theBooks, ALL_BOOKS_BY_AUTHOR);
     }
 
+    @Transactional(readOnly = false)
     public void addBookInfo() {
         List<Author> authors = authorDAO.findAll();
         List<Genre> genres = genreDAO.findAll();
@@ -83,7 +84,13 @@ public class BooksOperations {
         Integer pages = Integer.parseInt(sc.nextLine());
         System.out.print("Please, enter count of books: ");
         Integer count = Integer.parseInt(sc.nextLine());
-        Book newBook = new Book(title, author, genre, pages, count);
+
+        Book newBook = new Book();
+        newBook.setGenre(genre);
+        newBook.setAuthor(author);
+        newBook.setBookTitle(title);
+        newBook.setPages(pages);
+        newBook.setQuantity(count);
         // final show the books details.
         System.out.println("A new book's info is: " + newBook.toString());
         System.out.println();

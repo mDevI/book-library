@@ -18,9 +18,7 @@ CREATE TABLE IF NOT EXISTS new_schema.genres
 
 create table if not exists new_schema.books
 (
-	book_id         integer      not null
-		constraint books_pkey
-		primary key,
+	book_id         int(11)      NOT NULL AUTO_INCREMENT,
 	title           varchar(100) not null,
 	pages           integer,
 	count           integer,
@@ -30,7 +28,8 @@ create table if not exists new_schema.books
 	genre           integer
 		constraint books_genres_id_fk
 		references genres,
-	year_publishing date
+	year_publishing date,
+	PRIMARY KEY (book_id)
 );
 
 create table if not exists new_schema.comments

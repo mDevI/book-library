@@ -76,7 +76,7 @@ public class GenreOperations {
     public void deleteGenreById(Integer id) {
         List<Book> books = bookDAO.findByGenreId(id);
         List<Genre> allGenres = genreDAO.findAll();
-        if (books.size() > 0) {
+        if (books != null) {
             System.out.println("The deletion impossible due to the books have been found with such ID.");
         } else if (!allGenres.stream().map(Genre::getId).collect(Collectors.toList()).contains(id)) {
             System.out.println("There is no such genre");
