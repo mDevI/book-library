@@ -3,6 +3,7 @@ package com.mdevi.booklib.shell;
 import com.mdevi.booklib.service.AuthorsOperations;
 import com.mdevi.booklib.service.BooksOperations;
 import com.mdevi.booklib.service.GenreOperations;
+import com.mdevi.booklib.service.ReaderRegistryOperations;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
@@ -16,12 +17,20 @@ public class AppCommand {
     private final AuthorsOperations authorsOperations;
     private final BooksOperations booksOperations;
     private final GenreOperations genreOperations;
+    private final ReaderRegistryOperations readerRegistryOperations;
 
-    public AppCommand(AuthorsOperations authorsOperations, BooksOperations booksOperations, GenreOperations genreOperations) {
+    public AppCommand(AuthorsOperations authorsOperations, BooksOperations booksOperations,
+                      GenreOperations genreOperations, ReaderRegistryOperations readerRegistryOperations) {
         this.authorsOperations = authorsOperations;
         this.booksOperations = booksOperations;
         this.genreOperations = genreOperations;
+        this.readerRegistryOperations = readerRegistryOperations;
     }
+
+    /*******************************************************************************************************************
+     * AUTHORS COMMANDS
+     * *****************************************************************************************************************
+     */
 
     @ShellMethod(value = "Show all books authors info.", key = "show-all-authors", group = "Author operations")
     public void showAuthors() {
@@ -54,6 +63,11 @@ public class AppCommand {
         authorsOperations.updateAuthorByID(id);
     }
 
+    /*******************************************************************************************************************
+     * GENRES COMMAND
+     * *****************************************************************************************************************
+     */
+
     @ShellMethod(value = "Show all genres.", key = "show-all-genres", group = "Genre operations")
     public void findAllGenres() {
         genreOperations.findAllGenres();
@@ -79,6 +93,11 @@ public class AppCommand {
     public void deleteGenreById(@ShellOption(value = "--id", help = "Select the id to delete the genre.") Integer id) {
         genreOperations.deleteGenreById(id);
     }
+
+    /*******************************************************************************************************************
+     * BOOKS COMMANDS
+     * *****************************************************************************************************************
+     */
 
     @ShellMethod(value = "Show all the books info.", key = "show-all-books", group = "Books operations")
     public void findAllBooks() {
@@ -121,10 +140,27 @@ public class AppCommand {
         booksOperations.deleteBookById(id);
     }
 
-    /******************************************************************************************************************
-     * READER commands
-     * ****************************************************************************************************************
+    /*******************************************************************************************************************
+     * READERS REGISTRY commands
+     * *****************************************************************************************************************
      */
-    
+    @ShellMethod(value = "Register a new reader.", key = "add-new-reader", group = "Reader registry operations")
+    public void registerNewReader(@ShellOption(value = "--reader") String readerName,
+                                  @ShellOption(value = "--discount", defaultValue = "0") Byte discount) {
+        readerRegistryOperations.registerReader(readerName, discount);
+    }
 
+    @ShellMethod(value = "Show all readers list.", key = "show-all-readers", group = "Reader registry operations")
+    public void findAllReaders() {
+        readerRegistryOperations.showAllReaders();
+    }
+
+    @ShellMethod(value = "Find reader by name.", key = "find-reader-by-name", group = "Reader registry operations")
+    public void findReaderByName() {
+
+    }
+
+    public void findAllBorrowedBooksByReader() {
+
+    }
 }

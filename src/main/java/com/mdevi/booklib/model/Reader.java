@@ -21,7 +21,6 @@ public class Reader {
     public Reader() {
     }
 
-
     public int getId() {
         return id;
     }
@@ -38,5 +37,19 @@ public class Reader {
         this.name = name;
     }
 
+    public int getRank() {
+        return rank;
+    }
 
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
+    public byte getDiscount_point() {
+        return discount_point;
+    }
+
+    public void setDiscount_point(byte discount_point) {
+        this.discount_point = discount_point;
+    }
 }
