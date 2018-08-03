@@ -1,7 +1,7 @@
 package com.mdevi.booklib.model;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Table(name = "comments", schema = "new_schema")
@@ -15,7 +15,7 @@ public class Comment {
 
     @Column(name = "create_on")
     @Temporal(TemporalType.DATE)
-    private LocalDate commentDate;
+    private Date commentDate;
 
     @Column(name = "rationg")
     private byte rating;

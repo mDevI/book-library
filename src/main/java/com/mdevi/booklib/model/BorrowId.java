@@ -5,7 +5,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.Objects;
 
 @Embeddable
@@ -16,13 +16,13 @@ public class BorrowId implements Serializable {
     private Integer bookId;
     @Column(name = "date_from")
     @Temporal(TemporalType.DATE)
-    private LocalDate dateFrom;
+    private Date dateFrom;
 
 
     private BorrowId() {
     }
 
-    public BorrowId(Integer readerId, Integer bookId, LocalDate dateFrom) {
+    public BorrowId(Integer readerId, Integer bookId, Date dateFrom) {
         this.readerId = readerId;
         this.bookId = bookId;
         this.dateFrom = dateFrom;
@@ -44,11 +44,11 @@ public class BorrowId implements Serializable {
         this.bookId = bookId;
     }
 
-    public LocalDate getDateFrom() {
+    public Date getDateFrom() {
         return dateFrom;
     }
 
-    public void setDateFrom(LocalDate dateFrom) {
+    public void setDateFrom(Date dateFrom) {
         this.dateFrom = dateFrom;
     }
 

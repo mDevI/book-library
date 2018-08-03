@@ -6,7 +6,6 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
 import javax.validation.constraints.NotNull;
-import java.sql.Date;
 
 @ShellComponent
 public class AppCommand {
@@ -175,7 +174,7 @@ public class AppCommand {
             @ShellOption(value = "--readerID") String readerID,
             @ShellOption(value = "--term") String term
     ) {
-        Date dateTill = readerOperations.borrowBook(bookId, readerID, term);
+        readerOperations.borrowBook(bookId, readerID, term);
 
     }
 
