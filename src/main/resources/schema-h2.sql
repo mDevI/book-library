@@ -43,8 +43,34 @@ create table if not exists new_schema.comments
   reader_id integer not null
 );
 
+create table if not exists new_schema.readers
+(
+	name      varchar(120) not null,
+	rank      integer,
+	reader_id int8         not null
+		constraint readers_reader_id_pk
+		primary key,
+	discount  smallint
+);
+
+create table if not exists new_schema.borrows
+(
+	reader_id   integer not null
+		constraint borrows_readers_reader_id_fk
+		references readers,
+	book_id     integer not null
+		constraint borrows_books_book_id_fk
+		references books,
+	date_from   date    not null,
+	date_till   date,
+	date_return date,
+	constraint borrows_pk
+	primary key (reader_id, book_id, date_from)
+);
+
 create sequence authors_id_seq;
 create sequence genres_id_seq;
 create sequence books_book_id_seq;
+create sequence readers_reader_id_seq;
 
 

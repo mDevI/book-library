@@ -1,14 +1,12 @@
 package com.mdevi.booklib.shell;
 
-import com.mdevi.booklib.service.AuthorsOperations;
-import com.mdevi.booklib.service.BooksOperations;
-import com.mdevi.booklib.service.GenreOperations;
-import com.mdevi.booklib.service.ReaderRegistryOperations;
+import com.mdevi.booklib.service.*;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
 import javax.validation.constraints.NotNull;
+import java.sql.Date;
 
 @ShellComponent
 public class AppCommand {
@@ -18,13 +16,16 @@ public class AppCommand {
     private final BooksOperations booksOperations;
     private final GenreOperations genreOperations;
     private final ReaderRegistryOperations readerRegistryOperations;
+    private final ReaderOperations readerOperations;
 
     public AppCommand(AuthorsOperations authorsOperations, BooksOperations booksOperations,
-                      GenreOperations genreOperations, ReaderRegistryOperations readerRegistryOperations) {
+                      GenreOperations genreOperations, ReaderRegistryOperations readerRegistryOperations,
+                      ReaderOperations readerOperations) {
         this.authorsOperations = authorsOperations;
         this.booksOperations = booksOperations;
         this.genreOperations = genreOperations;
         this.readerRegistryOperations = readerRegistryOperations;
+        this.readerOperations = readerOperations;
     }
 
     /*******************************************************************************************************************
@@ -156,11 +157,36 @@ public class AppCommand {
     }
 
     @ShellMethod(value = "Find reader by name.", key = "find-reader-by-name", group = "Reader registry operations")
-    public void findReaderByName() {
+    public void findReaderByName(
+            @ShellOption(value = "--name", help = "Name substring for search.") String namePattern,
+            @ShellOption(value = "--strict", help = "Strict search option") Boolean strictOption
+    ) {
+        readerRegistryOperations.findReadersByName(namePattern, strictOption);
+    }
+
+
+    /**
+     * READER OPERATIONS
+     */
+    //TODO: Create a method for book borrow process
+    @ShellMethod(value = "Borrow the book by ID", key = "borrow-book", group = "Reader operations")
+    public void takeTheBook(
+            @ShellOption(value = "--bookID") String bookId,
+            @ShellOption(value = "--readerID") String readerID,
+            @ShellOption(value = "--term") String term
+    ) {
+        Date dateTill = readerOperations.borrowBook(bookId, readerID, term);
 
     }
 
+    //TODO: Create find all borrowed books by reader
     public void findAllBorrowedBooksByReader() {
+
+    }
+
+    //TODO: Create a method for book return processing.
+    @ShellMethod(value = "Take back the book to the library.", key = "take-back-book", group = "Reader operations")
+    public void takeBackTheBook() {
 
     }
 }

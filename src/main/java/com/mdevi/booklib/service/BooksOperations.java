@@ -164,7 +164,7 @@ public class BooksOperations {
         genres.sort(Comparator.comparingInt(Genre::getId));
         int index = 0;
         int rows = 3;
-        int columns = genres.size() % 3 == 0 ? genres.size() / 3 : genres.size() / 3 + 1;
+        int columns = genres.size() % rows == 0 ? genres.size() / rows : genres.size() / rows + 1;
         Genre[][] genre = new Genre[rows][columns];
         // fill out our genres matrix
         fillOutMatrix(genres, index, rows, columns, genre);
