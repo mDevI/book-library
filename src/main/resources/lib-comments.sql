@@ -403,7 +403,7 @@ SELECT pg_catalog.setval('new_schema.genres_id_seq', 31, true);
 -- Data for Name: readers; Type: TABLE DATA; Schema: new_schema; Owner: postgres
 --
 
-COPY new_schema.readers (name, point, reader_id, discount) FROM stdin;
+COPY new_schema.readers (name, rank, reader_id, discount) FROM stdin;
 \.
 
 

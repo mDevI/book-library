@@ -3,7 +3,7 @@ package com.mdevi.booklib.dao;
 import com.mdevi.booklib.model.Book;
 import com.mdevi.booklib.model.Reader;
 
-import java.time.LocalDate;
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,8 +22,9 @@ public interface ReaderDAO {
 
     void update(Reader reader);
 
-    void borrowTheBook(Book book, Reader reader, LocalDate dateFrom, LocalDate dateTill);
+    void borrowTheBook(Book book, Reader reader, Date dateFrom, Date dateTill);
 
-//    boolean takeBackTheBook(Book book);
-//
+    List<Book> findAllBooksBorrowedByReader(Reader reader);
+
+    void returnTheBook(Book book, Reader reader);
 }

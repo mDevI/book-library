@@ -17,9 +17,43 @@ public class Comment {
     @Temporal(TemporalType.DATE)
     private Date commentDate;
 
-    @Column(name = "rationg")
+    @Column(name = "rating")
     private byte rating;
 
+
     public Comment() {
+    }
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public Date getCommentDate() {
+        return commentDate;
+    }
+
+    public void setCommentDate(Date commentDate) {
+        this.commentDate = commentDate;
+    }
+
+    public byte getRating() {
+        return rating;
+    }
+
+    public void setRating(byte rating) {
+        this.rating = rating;
     }
 }

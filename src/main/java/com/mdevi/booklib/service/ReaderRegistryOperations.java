@@ -48,6 +48,7 @@ public class ReaderRegistryOperations {
     private void printReadersInTable(@NotNull List<Reader> readerList, String paragraph) {
         System.out.println("____________________" + paragraph + "______________________");
         System.out.printf("| %3s | %30s | %10s | %5s |", "ID", "READER NAME", "DISCOUNT", "POINT");
+        System.out.println();
         for (Reader reader : readerList) {
             System.out.printf("| %3s | %30s | %10s | %5s |\n", reader.getId(), reader.getName(),
                     reader.getDiscount_point(), reader.getRank());

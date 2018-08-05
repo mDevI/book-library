@@ -141,7 +141,7 @@ public class AppCommand {
     }
 
     /*******************************************************************************************************************
-     * READERS REGISTRY commands
+     * READERS REGISTRY COMMANDS
      * *****************************************************************************************************************
      */
     @ShellMethod(value = "Register a new reader.", key = "add-new-reader", group = "Reader registry operations")
@@ -167,7 +167,7 @@ public class AppCommand {
     /**
      * READER OPERATIONS
      */
-    //TODO: Create a method for book borrow process
+    //DONE: Create a method for book borrow process
     @ShellMethod(value = "Borrow the book by ID", key = "borrow-book", group = "Reader operations")
     public void takeTheBook(
             @ShellOption(value = "--bookID") String bookId,
@@ -175,17 +175,30 @@ public class AppCommand {
             @ShellOption(value = "--term") String term
     ) {
         readerOperations.borrowBook(bookId, readerID, term);
-
     }
 
-    //TODO: Create find all borrowed books by reader
-    public void findAllBorrowedBooksByReader() {
-
+    //DONE: Create find all borrowed books by reader
+    @ShellMethod(value = "Find all currently borrowed books by the reader.", key = "find-reader-books", group = "Reader operations")
+    public void findAllBorrowedBooksByReader(
+            @ShellOption(value = "--readerID") Integer readerID
+    ) {
+        readerOperations.findAllBorrowedBooksByReader(readerID);
     }
 
     //TODO: Create a method for book return processing.
     @ShellMethod(value = "Take back the book to the library.", key = "take-back-book", group = "Reader operations")
-    public void takeBackTheBook() {
+    public void takeBackTheBook(
+            @ShellOption(value = "--bookID") Integer bookId,
+            @ShellOption(value = "--readerID") Integer readerID
+    ) {
+        readerOperations.takeBackTheBook(bookId, readerID);
+    }
+
+    //TODO: Create a method for the reader's comments on borrowed books.
+    public void createComment(
+
+    ) {
 
     }
+
 }

@@ -1,6 +1,8 @@
 package com.mdevi.booklib.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "books", schema = "new_schema")
@@ -21,6 +23,10 @@ public class Book {
     private int pages;
     @Column(name = "count")
     private int quantity;
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BookBorrow> readers = new ArrayList<>();
+
 
     public Book() {
     }
@@ -80,6 +86,14 @@ public class Book {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public List<BookBorrow> getReaders() {
+        return readers;
+    }
+
+    public void setReaders(List<BookBorrow> readers) {
+        this.readers = readers;
     }
 
     @Override

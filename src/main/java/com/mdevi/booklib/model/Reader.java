@@ -1,13 +1,16 @@
 package com.mdevi.booklib.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "readers", schema = "new_schema")
 public class Reader {
     @Id
-    @SequenceGenerator(name = "reader_gen", sequenceName = "readers_reader_id_seq")
-    @GeneratedValue(generator = "reader_gen")
+    //@SequenceGenerator(name = "reader_gen", sequenceName = "readers_reader_id_seq")
+    //@GeneratedValue(generator = "reader_gen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reader_id")
     private int id;
     @Column(name = "name", nullable = false, unique = true)
@@ -17,6 +20,8 @@ public class Reader {
     @Column(name = "discount")
     private byte discount_point;
 
+    @OneToMany(mappedBy = "reader", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BookBorrow> borrows = new ArrayList<>();
 
     public Reader() {
     }
@@ -51,5 +56,13 @@ public class Reader {
 
     public void setDiscount_point(byte discount_point) {
         this.discount_point = discount_point;
+    }
+
+    public List<BookBorrow> getBorrows() {
+        return borrows;
+    }
+
+    public void setBorrows(List<BookBorrow> borrows) {
+        this.borrows = borrows;
     }
 }

@@ -2,14 +2,16 @@ package com.mdevi.booklib.dao.repository;
 
 import com.mdevi.booklib.dao.ReaderDAO;
 import com.mdevi.booklib.model.Book;
+import com.mdevi.booklib.model.BookBorrow;
 import com.mdevi.booklib.model.Reader;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.validation.constraints.NotNull;
+import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,7 +69,32 @@ public class ReaderRepository implements ReaderDAO {
     }
 
     @Override
-    public void borrowTheBook(@NotNull Book book, @NotNull Reader reader, @NotNull LocalDate dateFrom, @NotNull LocalDate dateTill) {
+    public void borrowTheBook(Book book, Reader reader, Date dateFrom, Date dateTill) {
+        BookBorrow bookBorrow = new BookBorrow(book, reader, dateFrom, dateTill);
+        try {
+            em.persist(bookBorrow);
+        } catch (Exception e) {
+            e.getMessage();
+        }
+    }
 
+    @Override
+    public List<Book> findAllBooksBorrowedByReader(Reader reader) {
+        List<BookBorrow> bookBorrows = reader.getBorrows();
+        List<Book> books = new ArrayList<>();
+        bookBorrows.forEach(bookBorrow -> books.add(bookBorrow.getBook()));
+        return books;
+    }
+
+    @Override
+    public void returnTheBook(Book book, Reader reader) {
+        TypedQuery<BookBorrow> queryToReturnBook =
+                em.createQuery("select b from BookBorrow b where b.book.id = 1", BookBorrow.class);
+        //    .setParameter("bookId", book.getId())
+        //    .setParameter("readerId", reader.getId());
+        BookBorrow bookBorrowToClose = queryToReturnBook.getSingleResult();
+        System.out.println(bookBorrowToClose.toString());
+        bookBorrowToClose.setDateReturn(Date.valueOf(LocalDate.now()));
+        em.merge(bookBorrowToClose);
     }
 }
