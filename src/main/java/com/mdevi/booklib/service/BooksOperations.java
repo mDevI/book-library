@@ -132,7 +132,7 @@ public class BooksOperations {
 
             System.out.printf("Book genre ID: (%3d): ", theBook.getGenre().getId());
             Integer newBookGenre = Integer.parseInt(sc.nextLine());
-            if (genreDAO.findById(newBookGenre) != null) {
+            if (genreDAO.findById(newBookGenre).isPresent()) {
                 theBook.setGenre(genreDAO.findById(newBookGenre).get());
             } else {
                 System.out.println("Bool genre with ID: " + newBookGenre + " isn't exist");

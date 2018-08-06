@@ -178,7 +178,7 @@ public class AppCommand {
         readerOperations.borrowBook(bookId, readerID, term);
     }
 
-    //DONE: Create find all borrowed books by reader
+    //DONE: Create find all borrowed books by reader.
     @ShellMethod(value = "Find all currently borrowed books by the reader.", key = "find-reader-books", group = "Reader operations")
     public void findAllBorrowedBooksByReader(
             @ShellOption(value = "--readerID") Integer readerID
@@ -195,10 +195,16 @@ public class AppCommand {
         readerOperations.takeBackTheBook(bookId, readerID);
     }
 
-    //Done: Create a method for the reader's comments on borrowed books.
+    //DONE: Create a method for the reader's comments on borrowed books by book id.
     @ShellMethod(value = "Show the comments about a book specified by its ID.", key = "read-comments-book", group = "Reader operations")
     public void readTheBookComments(@ShellOption(value = "--bookID", help = "Specify a book ID for search.") Integer bookId) {
         readerOperations.showAllBookComments(bookId);
+    }
+
+    //DONE: Create a method for the reader's comments on borrowed books by reader id.
+    @ShellMethod(value = "Show the comments about a book which were made by reader with ID.", key = "read-comments-reader", group = "Reader operations")
+    public void readTheReaderComments(@ShellOption(value = "--readerID", help = "Specify a reader ID for search.") Integer readerId) {
+        readerOperations.showAllReaderComments(readerId);
     }
 
 }

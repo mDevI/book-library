@@ -24,7 +24,6 @@ public interface BookDAO {
 
     String findTitleById(Integer id);
 
-
     void insert(Book book);
 
     void update(Book book);

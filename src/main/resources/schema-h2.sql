@@ -20,8 +20,8 @@ create table if not exists new_schema.books
 (
 	book_id         int(11)      NOT NULL AUTO_INCREMENT,
 	title           varchar(100) not null,
-	pages           integer,
-	count           integer,
+	pages           integer               DEFAULT NULL,
+	count           integer               DEFAULT NULL,
 	author          integer
 		constraint books_authors_id_fk
 		references authors,
@@ -34,12 +34,12 @@ create table if not exists new_schema.books
 
 create table if not exists new_schema.comments
 (
-	id        int(11) not null
-		constraint comments_pkey
-		primary key,
+	id        int(11) NOT NULL AUTO_INCREMENT,
+
 	comment   varchar(255),
 	create_on date,
-	rating    smallint
+	rating    smallint,
+	primary key (id)
 );
 
 create table if not exists new_schema.readers

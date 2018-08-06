@@ -8,8 +8,6 @@ import java.util.List;
 @Table(name = "authors", schema = "new_schema")
 public class Author {
     @Id
-//    @SequenceGenerator(name = "Author_gen", sequenceName = "authors_id_seq")
-//    @GeneratedValue(generator = "Author_gen")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;

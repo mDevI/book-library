@@ -21,21 +21,25 @@ public class CommentRepository implements CommentDAO {
 
     @Override
     public void insert(BookBorrow bookBorrow, Comment comment) {
+        em.persist(comment);
+        em.flush();
         bookBorrow.setComment(comment);
-        em.persist(bookBorrow);
+        em.merge(bookBorrow);
     }
 
     @Override
     public List<Comment> findAllCommentsByBook(Book book) {
         TypedQuery<Comment> queryComment =
-                em.createQuery("select c from Comment c , BookBorrow b where b.book.id = :bookId", Comment.class)
+                em.createQuery("select c from Comment c, BookBorrow b where c = b.comment and  b.book.id = :bookId", Comment.class)
                         .setParameter("bookId", book.getId());
         return queryComment.getResultList();
     }
 
     @Override
     public List<Comment> findAllCommentByReader(Reader reader) {
-
-        return null;
+        TypedQuery<Comment> queryComment =
+                em.createQuery("select c from Comment c , BookBorrow b where c = b.comment and b.reader.id = :readerId", Comment.class)
+                        .setParameter("readerId", reader.getId());
+        return queryComment.getResultList();
     }
 }

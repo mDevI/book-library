@@ -41,6 +41,8 @@ public class ReaderOperations {
             Date dateFrom = Date.valueOf(today);
             Date dateTill = Date.valueOf(returnDay);
             readerDAO.borrowTheBook(book, reader, dateFrom, dateTill);
+            System.out.println("The book \'" + book.getBookTitle() + "\' has been borrowed by " +
+                    reader.getName() + " till " + dateTill.toString());
         } else {
             System.out.println("This book is not available to borrow at the moment.");
         }
@@ -64,12 +66,12 @@ public class ReaderOperations {
     private void printBookList(List<Book> books, Reader reader) {
         int stringNumber = 1;
         System.out.println("The reader: " + reader.getName() + " has borrowed that book(s):");
-        System.out.println("#    book id:          book title:");
+        System.out.printf("%4s %10s %32s\n", "#", "BOOK ID", "TITLE");
         for (Book book : books) {
-            System.out.printf("%2s %10s %32s", stringNumber, book.getId(), book.getBookTitle());
+            System.out.printf("%4s %10s %32s\n", stringNumber, book.getId(), book.getBookTitle());
             stringNumber++;
-            System.out.println();
         }
+
     }
 
 
@@ -82,11 +84,11 @@ public class ReaderOperations {
             if (books.size() > 0 && books.contains(theBook)) {
                 BookBorrow bookBorrow = readerDAO.returnTheBook(theBook, theReader);
                 System.out.println("The book has been taken back to the library.");
-                System.out.print("Wish you comment that book? (Y)es or (N)o : ");
+                System.out.print("Do you wish to comment that book? (Y)es or (N)o : ");
                 Scanner sc = new Scanner(System.in);
                 String answerToModify = sc.nextLine();
                 if (answerToModify.toUpperCase().equals("Y")) {
-                    System.out.println("Please, enter your comment. (type \'q.q\' to exit)");
+                    System.out.println("Please, write back your comment below: (type \'q.q\' to exit)");
                     StringBuilder textComment = new StringBuilder();
                     String buffer = "";
                     while (!"q.q".equals(buffer)) {
@@ -115,8 +117,27 @@ public class ReaderOperations {
         }
     }
 
-    private void printCommentsList(List<Comment> comments, Book book) {
-        System.out.println("Book: " + book.getBookTitle() + " has that comment(s): ");
+    public void showAllReaderComments(Integer readerId) {
+        Reader theReader = readerDAO.findById(readerId);
+        if (theReader != null) {
+            List<Comment> comments = commentDAO.findAllCommentByReader(theReader);
+            if (comments.size() > 0) {
+                printCommentsList(comments, theReader);
+            }
+        }
+    }
+
+    private void printCommentsList(List<Comment> comments, Object o) {
+        Book book;
+        Reader reader;
+        if (o instanceof Book) {
+            book = (Book) o;
+            System.out.println("Book: " + book.getBookTitle() + " has that comment(s): ");
+        } else if (o instanceof Reader) {
+            reader = (Reader) o;
+            System.out.println("Reader: " + reader.getName() + " has made that comment(s): ");
+        }
+        System.out.println(comments.size());
         for (Comment comment : comments) {
             System.out.println(comment.getCommentDate().toString() + " " + comment.getComment());
         }
