@@ -1,6 +1,7 @@
 package com.mdevi.booklib.dao;
 
 import com.mdevi.booklib.model.Book;
+import com.mdevi.booklib.model.BookBorrow;
 import com.mdevi.booklib.model.Reader;
 
 import java.sql.Date;
@@ -26,5 +27,5 @@ public interface ReaderDAO {
 
     List<Book> findAllBooksBorrowedByReader(Reader reader);
 
-    void returnTheBook(Book book, Reader reader);
+    BookBorrow returnTheBook(Book book, Reader reader);
 }

@@ -164,8 +164,9 @@ public class AppCommand {
     }
 
 
-    /**
+    /*******************************************************************************************************************
      * READER OPERATIONS
+     * *****************************************************************************************************************
      */
     //DONE: Create a method for book borrow process
     @ShellMethod(value = "Borrow the book by ID", key = "borrow-book", group = "Reader operations")
@@ -185,8 +186,8 @@ public class AppCommand {
         readerOperations.findAllBorrowedBooksByReader(readerID);
     }
 
-    //TODO: Create a method for book return processing.
-    @ShellMethod(value = "Take back the book to the library.", key = "take-back-book", group = "Reader operations")
+    //DONE: Create a method for book return processing.
+    @ShellMethod(value = "Take back the book to the library.", key = "return-book", group = "Reader operations")
     public void takeBackTheBook(
             @ShellOption(value = "--bookID") Integer bookId,
             @ShellOption(value = "--readerID") Integer readerID
@@ -194,11 +195,10 @@ public class AppCommand {
         readerOperations.takeBackTheBook(bookId, readerID);
     }
 
-    //TODO: Create a method for the reader's comments on borrowed books.
-    public void createComment(
-
-    ) {
-
+    //Done: Create a method for the reader's comments on borrowed books.
+    @ShellMethod(value = "Show the comments about a book specified by its ID.", key = "read-comments-book", group = "Reader operations")
+    public void readTheBookComments(@ShellOption(value = "--bookID", help = "Specify a book ID for search.") Integer bookId) {
+        readerOperations.showAllBookComments(bookId);
     }
 
 }

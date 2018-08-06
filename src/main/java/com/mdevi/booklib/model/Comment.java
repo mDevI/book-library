@@ -56,4 +56,13 @@ public class Comment {
     public void setRating(byte rating) {
         this.rating = rating;
     }
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "comment='" + comment + '\'' +
+                ", commentDate=" + commentDate.toString() +
+                ", rating=" + rating +
+                '}';
+    }
 }

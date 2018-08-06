@@ -32,7 +32,7 @@ public class BookBorrow {
     @Temporal(TemporalType.DATE)
     private Date dateReturn;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
@@ -98,7 +98,8 @@ public class BookBorrow {
                 "book=" + book.getBookTitle() +
                 ", reader=" + reader.getName() +
                 ", dateFrom=" + dateFrom.toString() +
-                ", dateReturn=" + dateReturn.toString() +
+                ", dateReturn=" + (dateReturn == null ? "hasn't returned." : dateReturn.toString()) +
+                ", dateTill=" + dateTill.toString() +
                 '}';
     }
 }

@@ -70,9 +70,12 @@ public class ReaderRepository implements ReaderDAO {
 
     @Override
     public void borrowTheBook(Book book, Reader reader, Date dateFrom, Date dateTill) {
+        int availBookCount = book.getQuantity();
         BookBorrow bookBorrow = new BookBorrow(book, reader, dateFrom, dateTill);
+        book.setQuantity(availBookCount - 1);
         try {
             em.persist(bookBorrow);
+            em.persist(book);
         } catch (Exception e) {
             e.getMessage();
         }
@@ -87,14 +90,18 @@ public class ReaderRepository implements ReaderDAO {
     }
 
     @Override
-    public void returnTheBook(Book book, Reader reader) {
+    public BookBorrow returnTheBook(Book book, Reader reader) {
         TypedQuery<BookBorrow> queryToReturnBook =
-                em.createQuery("select b from BookBorrow b where b.book.id = 1", BookBorrow.class);
-        //    .setParameter("bookId", book.getId())
-        //    .setParameter("readerId", reader.getId());
+                em.createQuery("select b from BookBorrow b where b.reader.id = :readerId and" +
+                        " b.book.id = :bookId and b.dateReturn = null", BookBorrow.class)
+                        .setParameter("bookId", book.getId())
+                        .setParameter("readerId", reader.getId());
         BookBorrow bookBorrowToClose = queryToReturnBook.getSingleResult();
-        System.out.println(bookBorrowToClose.toString());
         bookBorrowToClose.setDateReturn(Date.valueOf(LocalDate.now()));
-        em.merge(bookBorrowToClose);
+        int bookCountAfter = book.getQuantity();
+        book.setQuantity(++bookCountAfter);
+        em.persist(book);
+        em.persist(bookBorrowToClose);
+        return bookBorrowToClose;
     }
 }

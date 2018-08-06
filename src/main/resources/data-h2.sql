@@ -43,3 +43,8 @@ INSERT INTO new_schema.books (book_id, title, pages, count, author, genre, year_
 VALUES (3, 'Milk and Honey', 316, 1, 3, 17, '2013-10-15');
 INSERT INTO new_schema.books (book_id, title, pages, count, author, genre, year_publishing)
 VALUES (4, 'Fahrenheit 451 ', 146, 1, 4, 29, '1953-07-16');
+
+INSERT into new_schema.readers (reader_id, name, rank, discount) VALUES (1, 'John Doe', 0 , 5);
+INSERT into new_schema.readers (reader_id, name, rank, discount) VALUES (2, 'Inn Ralf', 0 , 5);
+INSERT into new_schema.readers (reader_id, name, rank, discount) VALUES (3, 'Katherine Oliver', 1 , 10);
+INSERT into new_schema.readers (reader_id, name, rank, discount) VALUES (4, 'Meggy Norri', 0 , 0);
