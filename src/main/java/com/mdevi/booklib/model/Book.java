@@ -1,18 +1,38 @@
 package com.mdevi.booklib.model;
 
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "books", schema = "new_schema")
 public class Book {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "book_id", unique = true, nullable = false)
     private int id;
+    @Column(name = "title")
     private String bookTitle;
-    private String author;
-    private String genre;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH, CascadeType.MERGE})
+    @JoinColumn(name = "author")
+    private Author author;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH, CascadeType.MERGE})
+    @JoinColumn(name = "genre")
+    private Genre genre;
+    @Column(name = "pages")
     private int pages;
+    @Column(name = "count")
     private int quantity;
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BookBorrow> readers = new ArrayList<>();
+
 
     public Book() {
     }
 
-    public Book(int id, String bookTitle, String author, String genre, int pages, int quantity) {
-        this.id = id;
+    public Book(String bookTitle, Author author, Genre genre, int pages, int quantity) {
+        this.id = 0;
         this.bookTitle = bookTitle;
         this.author = author;
         this.genre = genre;
@@ -36,19 +56,19 @@ public class Book {
         this.bookTitle = bookTitle;
     }
 
-    public String getAuthor() {
+    public Author getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(Author author) {
         this.author = author;
     }
 
-    public String getGenre() {
+    public Genre getGenre() {
         return genre;
     }
 
-    public void setGenre(String genre) {
+    public void setGenre(Genre genre) {
         this.genre = genre;
     }
 
@@ -66,5 +86,23 @@ public class Book {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public List<BookBorrow> getReaders() {
+        return readers;
+    }
+
+    public void setReaders(List<BookBorrow> readers) {
+        this.readers = readers;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + id +
+                ", bookTitle='" + bookTitle + '\'' +
+                ", pages=" + pages +
+                ", quantity=" + quantity +
+                '}';
     }
 }
