@@ -226,7 +226,7 @@ ALTER SEQUENCE new_schema.genres_id_seq OWNED BY new_schema.genres.id;
 
 CREATE TABLE new_schema.readers (
     name character varying(120) NOT NULL,
-    point integer,
+    rank integer,
     reader_id integer NOT NULL,
     discount smallint
 );
@@ -294,13 +294,11 @@ ALTER TABLE ONLY new_schema.readers ALTER COLUMN reader_id SET DEFAULT nextval('
 -- Data for Name: authors; Type: TABLE DATA; Schema: new_schema; Owner: postgres
 --
 
-COPY new_schema.authors (name, dob, rank, id) FROM stdin;
-Douglas E. Richards	1964-01-09	0	2
-Rupi Kaur	1983-12-20	0	3
-Chris McMullen	1970-07-15	0	1
-Ray Bradbury	1920-08-22	0	4
-Stiven King	1900-05-12	5	7
-\.
+INSERT INTO new_schema.authors VALUES ('Douglas E. Richards', '1964-01-09', 0, 2);
+INSERT INTO new_schema.authors VALUES ('Rupi Kaur', '1983-12-20', 0, 3);
+INSERT INTO new_schema.authors VALUES ('Chris McMullen', '1970-07-15', 0, 1);
+INSERT INTO new_schema.authors VALUES ('Ray Bradbury', '1920-08-22', 0, 4);
+INSERT INTO new_schema.authors VALUES ('Stiven King', '1900-05-12', 5, 7);
 
 
 --
@@ -314,14 +312,12 @@ SELECT pg_catalog.setval('new_schema.authors_id_seq', 6, false);
 -- Data for Name: books; Type: TABLE DATA; Schema: new_schema; Owner: postgres
 --
 
-COPY new_schema.books (book_id, title, pages, count, author, genre) FROM stdin;
-1	Algebra Essentials Practice Workbook with Answers	600	1	1	15
-2	Split second	230	1	2	4
-3	Milk and Honey	316	1	3	17
-4	Fahrenheit 451 	146	1	4	29
-7	"Amazonian people"	345	3	4	30
-8	Wild West Men	312	1	4	30
-\.
+INSERT INTO new_schema.books VALUES (1, 'Algebra Essentials Practice Workbook with Answers', 600, 1, 1, 15);
+INSERT INTO new_schema.books VALUES (2, 'Split second', 230, 1, 2, 4);
+INSERT INTO new_schema.books VALUES (3, 'Milk and Honey', 316, 1, 3, 17);
+INSERT INTO new_schema.books VALUES (8, 'Wild West Men', 312, 1, 4, 30);
+INSERT INTO new_schema.books VALUES (7, 'Amazonian people', 345, 1, 4, 30);
+INSERT INTO new_schema.books VALUES (4, 'Fahrenheit 451 ', 146, 1, 4, 29);
 
 
 --
@@ -335,61 +331,57 @@ SELECT pg_catalog.setval('new_schema.books_book_id_seq', 9, true);
 -- Data for Name: borrows; Type: TABLE DATA; Schema: new_schema; Owner: postgres
 --
 
-COPY new_schema.borrows (reader_id, book_id, date_from, date_till, date_return, comment_id) FROM stdin;
-\.
+INSERT INTO new_schema.borrows VALUES (1, 4, '2018-08-07', '2018-08-17', '2018-08-07', 1);
 
 
 --
 -- Data for Name: comments; Type: TABLE DATA; Schema: new_schema; Owner: postgres
 --
 
-COPY new_schema.comments (id, comment, rating, create_on) FROM stdin;
-\.
+INSERT INTO new_schema.comments VALUES (1, 'Awesome book! I have never read so much interesting text. I recommend everyone read that book.', 0, '2018-08-07');
 
 
 --
 -- Name: comments_id_seq; Type: SEQUENCE SET; Schema: new_schema; Owner: postgres
 --
 
-SELECT pg_catalog.setval('new_schema.comments_id_seq', 1, false);
+SELECT pg_catalog.setval('new_schema.comments_id_seq', 1, true);
 
 
 --
 -- Data for Name: genres; Type: TABLE DATA; Schema: new_schema; Owner: postgres
 --
 
-COPY new_schema.genres (id, name) FROM stdin;
-1	Science fiction
-2	Satire
-3	Drama
-4	Action and Adventure
-5	Romance
-6	Mystery
-7	Self help
-8	Health
-9	Guide
-10	Travel
-11	Childrens
-12	Religions
-13	Science
-14	History
-15	Math
-16	Anthology
-17	Poetry
-18	Encyclopedias
-19	Dictionaries
-20	Comics
-21	Art
-22	Cookbooks
-23	Diaries
-24	Journals
-25	Prayer books
-26	Series
-27	Trilogies
-28	Biographies
-29	Fantasy
-30	Temporal Genre
-\.
+INSERT INTO new_schema.genres VALUES (1, 'Science fiction');
+INSERT INTO new_schema.genres VALUES (2, 'Satire');
+INSERT INTO new_schema.genres VALUES (3, 'Drama');
+INSERT INTO new_schema.genres VALUES (4, 'Action and Adventure');
+INSERT INTO new_schema.genres VALUES (5, 'Romance');
+INSERT INTO new_schema.genres VALUES (6, 'Mystery');
+INSERT INTO new_schema.genres VALUES (7, 'Self help');
+INSERT INTO new_schema.genres VALUES (8, 'Health');
+INSERT INTO new_schema.genres VALUES (9, 'Guide');
+INSERT INTO new_schema.genres VALUES (10, 'Travel');
+INSERT INTO new_schema.genres VALUES (11, 'Children''s');
+INSERT INTO new_schema.genres VALUES (12, 'Religions');
+INSERT INTO new_schema.genres VALUES (13, 'Science');
+INSERT INTO new_schema.genres VALUES (14, 'History');
+INSERT INTO new_schema.genres VALUES (15, 'Math');
+INSERT INTO new_schema.genres VALUES (16, 'Anthology');
+INSERT INTO new_schema.genres VALUES (17, 'Poetry');
+INSERT INTO new_schema.genres VALUES (18, 'Encyclopedias');
+INSERT INTO new_schema.genres VALUES (19, 'Dictionaries');
+INSERT INTO new_schema.genres VALUES (20, 'Comics');
+INSERT INTO new_schema.genres VALUES (21, 'Art');
+INSERT INTO new_schema.genres VALUES (22, 'Cookbooks');
+INSERT INTO new_schema.genres VALUES (23, 'Diaries');
+INSERT INTO new_schema.genres VALUES (24, 'Journals');
+INSERT INTO new_schema.genres VALUES (25, 'Prayer books');
+INSERT INTO new_schema.genres VALUES (26, 'Series');
+INSERT INTO new_schema.genres VALUES (27, 'Trilogies');
+INSERT INTO new_schema.genres VALUES (28, 'Biographies');
+INSERT INTO new_schema.genres VALUES (29, 'Fantasy');
+INSERT INTO new_schema.genres VALUES (30, 'Temporal Genre');
 
 
 --
@@ -403,8 +395,10 @@ SELECT pg_catalog.setval('new_schema.genres_id_seq', 31, true);
 -- Data for Name: readers; Type: TABLE DATA; Schema: new_schema; Owner: postgres
 --
 
-COPY new_schema.readers (name, rank, reader_id, discount) FROM stdin;
-\.
+INSERT INTO new_schema.readers VALUES ('John Doe', 0, 1, 5);
+INSERT INTO new_schema.readers VALUES ('Ralf Vins', 0, 2, 0);
+INSERT INTO new_schema.readers VALUES ('Nick McCola', 1, 3, 10);
+INSERT INTO new_schema.readers VALUES ('Liz Turner', 0, 4, 2);
 
 
 --

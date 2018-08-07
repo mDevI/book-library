@@ -24,7 +24,7 @@ public class CommentRepository implements CommentDAO {
         em.persist(comment);
         em.flush();
         bookBorrow.setComment(comment);
-        em.merge(bookBorrow);
+        //em.merge(bookBorrow);
     }
 
     @Override
