@@ -1,7 +1,7 @@
 package com.mdevi.booklib.service;
 
-import com.mdevi.booklib.dao.BookDAO;
-import com.mdevi.booklib.dao.GenreDAO;
+import com.mdevi.booklib.dao.repository.BookRepository;
+import com.mdevi.booklib.dao.repository.GenreRepository;
 import com.mdevi.booklib.model.Book;
 import com.mdevi.booklib.model.Genre;
 import org.springframework.stereotype.Service;
@@ -15,17 +15,17 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class GenreOperations {
-    private final GenreDAO genreDAO;
-    private final BookDAO bookDAO;
+    private final GenreRepository genreRepository;
+    private final BookRepository bookRepository;
 
-    public GenreOperations(GenreDAO genreDAO, BookDAO bookDAO) {
-        this.genreDAO = genreDAO;
-        this.bookDAO = bookDAO;
+    public GenreOperations(GenreRepository genreRepository, BookRepository bookRepository) {
+        this.genreRepository = genreRepository;
+        this.bookRepository = bookRepository;
     }
 
     @Transactional(readOnly = true)
     public void findAllGenres() {
-        List<Genre> genres = genreDAO.findAll();
+        List<Genre> genres = genreRepository.findAll();
         genres.sort(Comparator.comparingInt(Genre::getId));
         if (genres.size() > 0) {
             System.out.println("_______________ Genres ________________");
@@ -42,7 +42,7 @@ public class GenreOperations {
 
     @Transactional(readOnly = true)
     public void findGenreById(Integer id) {
-        Optional<Genre> theGenre = genreDAO.findById(id);
+        Optional<Genre> theGenre = genreRepository.findById(id);
         if (theGenre.isPresent()) {
             System.out.println(theGenre.get().toString());
         } else {
@@ -52,7 +52,7 @@ public class GenreOperations {
 
     @Transactional(readOnly = true)
     public void findGenreByTitle(String title) {
-        Optional<Genre> genre = genreDAO.findByTitle(title);
+        Optional<Genre> genre = genreRepository.findByTitle(title);
         if (genre.isPresent()) {
             System.out.println(genre.get().toString());
         } else {
@@ -63,9 +63,9 @@ public class GenreOperations {
     public void addNewGenre(String genreToAdd) {
         Genre newGenre = new Genre();
         newGenre.setTitle(genreToAdd);
-        Optional<Genre> genre = genreDAO.findByTitle(genreToAdd);
+        Optional<Genre> genre = genreRepository.findByTitle(genreToAdd);
         if (!genre.isPresent()) {
-            if (genreDAO.insert(newGenre) > 0) {
+            if (genreRepository.save(newGenre).getId() > 0) {
                 System.out.println("New genre has been saved.");
             }
         } else {
@@ -74,15 +74,15 @@ public class GenreOperations {
     }
 
     public void deleteGenreById(Integer id) {
-        List<Book> books = bookDAO.findByGenreId(id);
-        List<Genre> allGenres = genreDAO.findAll();
-        if (books != null) {
+        List<Book> books = bookRepository.findAllByGenre_Id(id);
+        List<Genre> allGenres = genreRepository.findAll();
+        if (books.size() > 0) {
             System.out.println("The deletion impossible due to the books have been found with such ID.");
         } else if (!allGenres.stream().map(Genre::getId).collect(Collectors.toList()).contains(id)) {
             System.out.println("There is no such genre");
         } else {
             System.out.println("The genre has been deleted successfully");
-            genreDAO.deleteById(id);
+            genreRepository.deleteById(id);
         }
     }
 }

@@ -1,40 +1,39 @@
 package com.mdevi.booklib.service;
 
-import com.mdevi.booklib.dao.BookDAO;
-import com.mdevi.booklib.dao.CommentDAO;
-import com.mdevi.booklib.dao.ReaderDAO;
+import com.mdevi.booklib.dao.repository.BookRepository;
+import com.mdevi.booklib.dao.repository.CommentRepository;
+import com.mdevi.booklib.dao.repository.ReaderRepository;
 import com.mdevi.booklib.model.Book;
-import com.mdevi.booklib.model.BookBorrow;
 import com.mdevi.booklib.model.Comment;
 import com.mdevi.booklib.model.Reader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Scanner;
 
 
 @Service
 @Transactional(readOnly = true)
 public class ReaderOperations {
 
-    private final ReaderDAO readerDAO;
-    private final BookDAO bookDAO;
-    private final CommentDAO commentDAO;
+    private final ReaderRepository readerRepository;
+    private final BookRepository bookRepository;
+    private final CommentRepository commentRepository;
 
 
-    public ReaderOperations(ReaderDAO readerDAO, BookDAO bookDAO, CommentDAO commentDAO) {
-        this.readerDAO = readerDAO;
-        this.bookDAO = bookDAO;
-        this.commentDAO = commentDAO;
+    public ReaderOperations(ReaderRepository readerRepository,
+                            BookRepository bookRepository,
+                            CommentRepository commentRepository) {
+        this.readerRepository = readerRepository;
+        this.bookRepository = bookRepository;
+        this.commentRepository = commentRepository;
     }
 
     @Transactional
     public void borrowBook(String bookId, String readerId, String term) {
-        Book book = bookDAO.findById(Integer.parseInt(bookId));
-        Reader reader = readerDAO.findById(Integer.parseInt(readerId));
+/*
+        Book book = bookRepository.findById(Integer.parseInt(bookId)).get();
+        Reader reader = readerRepository.findById(Integer.parseInt(readerId)).get();
         if (book.getQuantity() > 0) {
             LocalDate today = LocalDate.now();
             LocalDate returnDay = today.plusDays(Long.parseLong(term));
@@ -45,10 +44,11 @@ public class ReaderOperations {
                     reader.getName() + " till " + dateTill.toString());
         } else {
             System.out.println("This book is not available to borrow at the moment.");
-        }
+        }*/
     }
 
     public void findAllBorrowedBooksByReader(Integer readerID) {
+/*
         Reader theReader = readerDAO.findById(readerID);
         if (theReader != null) {
             List<Book> books = readerDAO.findAllBooksBorrowedByReader(theReader);
@@ -60,6 +60,7 @@ public class ReaderOperations {
         } else {
             System.out.println("There is no such reader.");
         }
+*/
 
     }
 
@@ -77,7 +78,7 @@ public class ReaderOperations {
 
     @Transactional
     public void takeBackTheBook(Integer bookId, Integer readerID) {
-        Reader theReader = readerDAO.findById(readerID);
+/*        Reader theReader = readerDAO.findById(readerID);
         Book theBook = bookDAO.findById(bookId);
         if (theReader != null) {
             List<Book> books = readerDAO.findAllBooksBorrowedByReader(theReader);
@@ -104,27 +105,27 @@ public class ReaderOperations {
             }
         } else {
             System.out.println("The reader with ID = " + readerID + " hasn't borrowed the book with ID = " + bookId);
-        }
+        }*/
     }
 
     public void showAllBookComments(Integer bookId) {
-        Book theBook = bookDAO.findById(bookId);
+/*        Book theBook = bookDAO.findById(bookId);
         if (theBook != null) {
             List<Comment> comments = commentDAO.findAllCommentsByBook(theBook);
             if (comments.size() > 0) {
                 printCommentsList(comments, theBook);
             }
-        }
+        }*/
     }
 
     public void showAllReaderComments(Integer readerId) {
-        Reader theReader = readerDAO.findById(readerId);
+/*        Reader theReader = readerDAO.findById(readerId);
         if (theReader != null) {
             List<Comment> comments = commentDAO.findAllCommentByReader(theReader);
             if (comments.size() > 0) {
                 printCommentsList(comments, theReader);
             }
-        }
+        }*/
     }
 
     private void printCommentsList(List<Comment> comments, Object o) {

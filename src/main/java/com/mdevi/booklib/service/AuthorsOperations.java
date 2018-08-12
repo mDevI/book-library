@@ -1,6 +1,5 @@
 package com.mdevi.booklib.service;
 
-import com.mdevi.booklib.dao.AuthorDAO;
 import com.mdevi.booklib.dao.repository.AuthorRepository;
 import com.mdevi.booklib.model.Author;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,26 +10,26 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 @Service
 @Transactional
 public class AuthorsOperations {
 
-    private final AuthorDAO authorDAO;
-
+    private final AuthorRepository authorRepository;
 
     @Autowired
-    public AuthorsOperations(AuthorRepository repository) {
-        this.authorDAO = repository;
+    public AuthorsOperations(AuthorRepository authorRepository) {
+        this.authorRepository = authorRepository;
     }
 
 
     @Transactional(readOnly = true)
     public void showAuthors() {
-        List<Author> authors = authorDAO.findAll();
+        List<Author> authors = authorRepository.findAll();
         System.out.println("Authors size = " + authors.size());
-        if (authors != null && authors.size() > 0) {
+        if (authors.size() > 0) {
             System.out.println("_______________________        Authors       _______________________");
             System.out.printf("| %2s | %40s | %10s | %4s |\n", "ID", "NAME", "DATE-BIRTH", "RANK");
             for (Author author : authors) {
@@ -38,14 +37,15 @@ public class AuthorsOperations {
                         author.getId(), author.getName(), author.getDateOfBirth().toString(), author.getRank());
             }
             System.out.println("_______________________        Authors       _______________________");
-            System.out.printf("Total %3d authors found.\n", authorDAO.count());
+            System.out.printf("Total %3d authors found.\n", authorRepository.count());
         }
     }
 
     @Transactional(readOnly = true)
     public void findById(Integer id) {
-        Author theAuthor = authorDAO.findById(id);
-        if (theAuthor != null) {
+        Optional<Author> author = authorRepository.findById(id);
+        if (author.isPresent()) {
+            Author theAuthor = author.get();
             System.out.println(theAuthor.toString());
         } else {
             System.out.println("Author with ID= " + id + " is not found.");
@@ -65,45 +65,46 @@ public class AuthorsOperations {
             ex.printStackTrace();
         }
         //System.out.println(newAuthor.toString());
-        Integer idCreated = authorDAO.insert(newAuthor);
-        if (idCreated != null) {
+
+        int idCreated = (authorRepository.save(newAuthor)).getId();
+        if (idCreated != 0) {
             System.out.println("A new author info has been saved successfully.");
-            System.out.println(authorDAO.findById(idCreated).toString());
+            System.out.println(newAuthor.toString());
         } else {
             System.out.println("An author info hasn't been saved.");
         }
     }
 
     public void deleteAuthor(Integer id) {
-        authorDAO.deleteById(id);
+        authorRepository.deleteById(id);
     }
 
     public void updateAuthorByID(Integer id) {
-        Author selectedAuthor = authorDAO.findById(id);
-        if (selectedAuthor != null) {
+        Optional<Author> selectedAuthor = authorRepository.findById(id);
+        if (selectedAuthor.isPresent()) {
 
             System.out.println("Please enter new author's info step by step.");
             final Scanner sc = new Scanner(System.in);
-            System.out.print("Author's name: (" + selectedAuthor.getName() + "): ");
+            System.out.print("Author's name: (" + selectedAuthor.get().getName() + "): ");
             String newNameAuthor = sc.nextLine();
-            if (!newNameAuthor.isEmpty() && !newNameAuthor.equals(selectedAuthor.getName()))
-                selectedAuthor.setName(newNameAuthor);
+            if (!newNameAuthor.isEmpty() && !newNameAuthor.equals(selectedAuthor.get().getName()))
+                selectedAuthor.get().setName(newNameAuthor);
 
-            System.out.printf("Author's date of birth: (%10s): ", selectedAuthor.getDateOfBirth().toString());
+            System.out.printf("Author's date of birth: (%10s): ", selectedAuthor.get().getDateOfBirth().toString());
             String newAuthorBirthDate = sc.nextLine();
-            if (!newAuthorBirthDate.equals(selectedAuthor.getDateOfBirth().toString()) && !newAuthorBirthDate.isEmpty())
-                selectedAuthor.setDateOfBirth(Date.valueOf(newAuthorBirthDate));
+            if (!newAuthorBirthDate.equals(selectedAuthor.get().getDateOfBirth().toString()) && !newAuthorBirthDate.isEmpty())
+                selectedAuthor.get().setDateOfBirth(Date.valueOf(newAuthorBirthDate));
 
-            System.out.printf("Author's rank: (%2d): ", selectedAuthor.getRank());
-            Integer newAuthorRank = sc.nextInt();
-            if (!newNameAuthor.equals(selectedAuthor.getName())) selectedAuthor.setRank(newAuthorRank);
+            System.out.printf("Author's rank: (%2d): ", selectedAuthor.get().getRank());
+            int newAuthorRank = sc.nextInt();
+            if (!newNameAuthor.equals(selectedAuthor.get().getName())) selectedAuthor.get().setRank(newAuthorRank);
 
             System.out.println("Modified author's info is: " + selectedAuthor.toString());
             System.out.println();
             System.out.print("\nAre you sure to save it? (Y)es or (N)o : ");
             String answerToModify = sc.next();
             if (answerToModify.toUpperCase().equals("Y")) {
-                authorDAO.update(selectedAuthor);
+                authorRepository.save(selectedAuthor.get());
                 System.out.println("The author's info has been updated.");
             }
         }

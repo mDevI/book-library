@@ -1,6 +1,6 @@
 package com.mdevi.booklib.service;
 
-import com.mdevi.booklib.dao.ReaderDAO;
+import com.mdevi.booklib.dao.repository.ReaderRepository;
 import com.mdevi.booklib.model.Reader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,27 +17,27 @@ public class ReaderRegistryOperations {
 
     private static final String ALL_LIBRARY_READERS = " ALL LIBRARY READERS ";
     private static final String READERS_BY_NAME = " READER BY NAME: ";
-    private final ReaderDAO readerDAO;
+    private final ReaderRepository readerRepository;
 
-    public ReaderRegistryOperations(ReaderDAO readerDAO) {
-        this.readerDAO = readerDAO;
+    public ReaderRegistryOperations(ReaderRepository readerRepository) {
+        this.readerRepository = readerRepository;
     }
 
     public void registerReader(String readerName, Byte discount) {
 
-        if (readerDAO.findByName(readerName).isPresent()) {
+        if (readerRepository.findReaderByName(readerName).isPresent()) {
             System.out.println("A reader with such name is already exists.");
         } else {
             Reader reader = new Reader();
             reader.setName(readerName);
             reader.setDiscount_point(discount);
-            readerDAO.insert(reader);
+            readerRepository.save(reader);
         }
     }
 
 
     public void showAllReaders() {
-        final List<Reader> readerList = readerDAO.findAll();
+        final List<Reader> readerList = readerRepository.findAll();
         if (readerList.size() > 0) {
             printReadersInTable(readerList, ALL_LIBRARY_READERS);
         } else {
@@ -59,12 +59,12 @@ public class ReaderRegistryOperations {
     public void findReadersByName(String namePattern, Boolean strictOption) {
         List<Reader> readersList = new ArrayList<>();
         if (strictOption) {
-            Optional<Reader> reader = readerDAO.findByName(namePattern);
+            Optional<Reader> reader = readerRepository.findReaderByName(namePattern);
             if (reader.isPresent()) {
                 readersList.add(reader.get());
             }
         } else {
-            readersList = readerDAO.findByNameLike(namePattern);
+            readersList = readerRepository.findReadersByNameIsLike(namePattern);
         }
         if (readersList.size() > 0) {
             readersList.sort(Comparator.comparingInt(Reader::getId));

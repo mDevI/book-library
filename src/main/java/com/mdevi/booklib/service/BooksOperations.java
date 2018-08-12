@@ -1,8 +1,8 @@
 package com.mdevi.booklib.service;
 
-import com.mdevi.booklib.dao.AuthorDAO;
-import com.mdevi.booklib.dao.BookDAO;
-import com.mdevi.booklib.dao.GenreDAO;
+import com.mdevi.booklib.dao.repository.AuthorRepository;
+import com.mdevi.booklib.dao.repository.BookRepository;
+import com.mdevi.booklib.dao.repository.GenreRepository;
 import com.mdevi.booklib.model.Author;
 import com.mdevi.booklib.model.Book;
 import com.mdevi.booklib.model.Genre;
@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 @Service
 @Transactional
@@ -25,31 +22,31 @@ public class BooksOperations {
     private static final String ALL_BOOKS_BY_AUTHOR = "ALL BOOKS BY AUTHOR. ";
     private static final String ALL_BOOKS_BY_GENRE = "ALL BOOKS BY GENRE.";
 
-    private final BookDAO bookDAO;
-    private final AuthorDAO authorDAO;
-    private final GenreDAO genreDAO;
+    private final BookRepository bookRepository;
+    private final AuthorRepository authorRepository;
+    private final GenreRepository genreRepository;
 
     //
     @Autowired
-    public BooksOperations(BookDAO bookDAO, AuthorDAO authorDAO, GenreDAO genreDAO) {
-        this.bookDAO = bookDAO;
-        this.authorDAO = authorDAO;
-        this.genreDAO = genreDAO;
+    public BooksOperations(BookRepository bookRepository, AuthorRepository authorRepository, GenreRepository genreRepository) {
+        this.bookRepository = bookRepository;
+        this.authorRepository = authorRepository;
+        this.genreRepository = genreRepository;
     }
 
     @Transactional(readOnly = true)
     public void findAllBooks() {
-        List<Book> theBooks = bookDAO.findAllWithDetails();
+        List<Book> theBooks = bookRepository.findAll();
         printBookList(theBooks, ALL_BOOKS_TITLE);
     }
 
     @Transactional(readOnly = true)
     public void findBookByTitle(String titlePattern, Boolean searchStrongOption) {
-        List<Book> theBooks = new ArrayList<>();
+        List<Book> theBooks;
         if (searchStrongOption) {
-            theBooks.add(bookDAO.findByTitle(titlePattern));
+            theBooks = bookRepository.findBooksByBookTitle(titlePattern);
         } else {
-            theBooks = bookDAO.findByTitleLike(titlePattern);
+            theBooks = bookRepository.findBooksByBookTitleIsLike(titlePattern);
         }
         printBookList(theBooks, ALL_BOOKS_BY_TITLE);
     }
@@ -58,26 +55,27 @@ public class BooksOperations {
     public void findBookByAuthor(String authorName, Boolean strictSearch) {
         List<Book> theBooks = new ArrayList<>();
         if (strictSearch) {
-            theBooks.add(bookDAO.findByAuthor(authorName));
+            Optional<Book> theBook = bookRepository.findBookByAuthor_Name(authorName);
+            theBook.ifPresent(theBooks::add);
         } else {
-            theBooks.addAll(bookDAO.findByAuthorLike(authorName));
+            theBooks.addAll(bookRepository.findBooksByAuthorNameIsLike(authorName));
         }
         printBookList(theBooks, ALL_BOOKS_BY_AUTHOR);
     }
 
     @Transactional(readOnly = false)
     public void addBookInfo() {
-        List<Author> authors = authorDAO.findAll();
-        List<Genre> genres = genreDAO.findAll();
+        List<Author> authors = authorRepository.findAll();
+        List<Genre> genres = genreRepository.findAll();
         final Scanner sc = new Scanner(System.in);
         printGenresInfo(genres);
         System.out.print("Please, select the genre ID for your new book: ");
         Integer genreId = Integer.parseInt(sc.nextLine());
-        Genre genre = this.genreDAO.findById(genreId).get();
+        Genre genre = this.genreRepository.findById(genreId).get();
         printAuthorsInfo(authors);
         System.out.print("Please, select the author ID for your new book: ");
         Integer authorId = Integer.parseInt(sc.nextLine());
-        Author author = this.authorDAO.findById(authorId);
+        Author author = this.authorRepository.findById(authorId).get();
         System.out.print("Please, enter the book's title: ");
         String title = sc.nextLine();
         System.out.print("Please, enter count of pages: ");
@@ -97,43 +95,43 @@ public class BooksOperations {
         System.out.print("\nAre you sure to save it? (Y)es or (N)o : ");
         String answerToModify = sc.next();
         if (answerToModify.toUpperCase().equals("Y")) {
-            this.bookDAO.insert(newBook);
+            this.bookRepository.save(newBook);
             System.out.println("The book's info has been saved.");
         }
     }
 
     public void updateBookInfo(Integer bookId) {
-        Book theBook = bookDAO.findById(bookId);
-        if (theBook != null && theBook.getId() > 0) {
+        Optional<Book> theBook = bookRepository.findById(bookId);
+        if (theBook.isPresent()) {
 
             System.out.println("Please enter new book's info step by step. All values are mandatory.");
             final Scanner sc = new Scanner(System.in);
-            System.out.print("Book title: (" + theBook.getBookTitle() + "): ");
+            System.out.print("Book title: (" + theBook.get().getBookTitle() + "): ");
             String newBookTitle = sc.nextLine();
-            if (!newBookTitle.isEmpty() && !newBookTitle.equals(theBook.getBookTitle()))
-                theBook.setBookTitle(newBookTitle);
+            if (!newBookTitle.isEmpty() && !newBookTitle.equals(theBook.get().getBookTitle()))
+                theBook.get().setBookTitle(newBookTitle);
 
-            System.out.printf("Book page count: (%4s): ", theBook.getPages());
+            System.out.printf("Book page count: (%4s): ", theBook.get().getPages());
             Integer newBookPages = Integer.parseInt(sc.nextLine());
-            if (!newBookPages.equals(theBook.getPages()) || theBook.getPages() == 0)
-                theBook.setPages(newBookPages);
+            if (!newBookPages.equals(theBook.get().getPages()) || theBook.get().getPages() == 0)
+                theBook.get().setPages(newBookPages);
 
-            System.out.printf("Book quantity: (%2d): ", theBook.getQuantity());
+            System.out.printf("Book quantity: (%2d): ", theBook.get().getQuantity());
             Integer newBookCount = Integer.parseInt(sc.nextLine());
-            if (newBookCount != theBook.getQuantity()) theBook.setQuantity(newBookCount);
+            if (newBookCount != theBook.get().getQuantity()) theBook.get().setQuantity(newBookCount);
 
-            System.out.printf("Book author ID: (%3d): ", theBook.getAuthor().getId());
+            System.out.printf("Book author ID: (%3d): ", theBook.get().getAuthor().getId());
             Integer newBookAuthor = Integer.parseInt(sc.nextLine());
-            if (authorDAO.findById(newBookAuthor) != null) {
-                theBook.setAuthor(authorDAO.findById(newBookAuthor));
+            if (authorRepository.findById(newBookAuthor).isPresent()) {
+                theBook.get().setAuthor(authorRepository.findById(newBookAuthor).get());
             } else {
                 System.out.println("Author with ID: " + newBookAuthor + " isn't exist.");
             }
 
-            System.out.printf("Book genre ID: (%3d): ", theBook.getGenre().getId());
+            System.out.printf("Book genre ID: (%3d): ", theBook.get().getGenre().getId());
             Integer newBookGenre = Integer.parseInt(sc.nextLine());
-            if (genreDAO.findById(newBookGenre).isPresent()) {
-                theBook.setGenre(genreDAO.findById(newBookGenre).get());
+            if (genreRepository.findById(newBookGenre).isPresent()) {
+                theBook.get().setGenre(genreRepository.findById(newBookGenre).get());
             } else {
                 System.out.println("Bool genre with ID: " + newBookGenre + " isn't exist");
             }
@@ -143,18 +141,18 @@ public class BooksOperations {
             System.out.print("\nAre you sure to save it? (Y)es or (N)o : ");
             String answerToModify = sc.next();
             if (answerToModify.toUpperCase().equals("Y")) {
-                bookDAO.update(theBook);
+                bookRepository.save(theBook.get());
                 System.out.println("The book's info has been updated.");
             }
         }
     }
 
     public void deleteBookById(Integer id) {
-        bookDAO.delete(id);
+        bookRepository.deleteById(id);
     }
 
     public void findBooksByGenre(String genreTitle) {
-        List<Book> booksByGenre = bookDAO.findBooksByGenre(genreTitle);
+        List<Book> booksByGenre = bookRepository.findBooksByGenreTitle(genreTitle);
         if (booksByGenre.size() > 0) {
             printBookList(booksByGenre, ALL_BOOKS_BY_GENRE);
         }

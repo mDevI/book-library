@@ -16,7 +16,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import static junit.framework.TestCase.assertNotNull;
+import java.util.Optional;
+
 import static junit.framework.TestCase.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -37,13 +38,13 @@ public class AuthorDaoTest {
 
     @Test
     public void testFindOne() {
-        Author author = authorRepository.findById(1);
-        assertNotNull(author);
+        Optional<Author> author = authorRepository.findById(1);
+        assertTrue(author.isPresent());
     }
 
     @Test
     public void testFindCount() {
-        int count = authorRepository.count();
+        long count = authorRepository.count();
         assertTrue(count > 0);
 
     }
@@ -52,8 +53,8 @@ public class AuthorDaoTest {
     public void testInsert() {
         Author testAuthor = new Author();
         testAuthor.setName("Test Test");
-        Integer idTestUserInsert = authorRepository.insert(testAuthor);
-        assertNotNull(idTestUserInsert);
+        testAuthor = authorRepository.save(testAuthor);
+        assertTrue(testAuthor.getId() > 0);
     }
 
     @Test
