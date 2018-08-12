@@ -58,7 +58,7 @@ public class BooksOperations {
             Optional<Book> theBook = bookRepository.findBookByAuthor_Name(authorName);
             theBook.ifPresent(theBooks::add);
         } else {
-            theBooks.addAll(bookRepository.findBooksByAuthorNameIsLike(authorName));
+            theBooks.addAll(bookRepository.findBooksByAuthor_NameLike("%" + authorName + "%"));
         }
         printBookList(theBooks, ALL_BOOKS_BY_AUTHOR);
     }

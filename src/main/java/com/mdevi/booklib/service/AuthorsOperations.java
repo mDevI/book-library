@@ -99,13 +99,13 @@ public class AuthorsOperations {
             int newAuthorRank = sc.nextInt();
             if (!newNameAuthor.equals(selectedAuthor.get().getName())) selectedAuthor.get().setRank(newAuthorRank);
 
-            System.out.println("Modified author's info is: " + selectedAuthor.toString());
+            System.out.println("Modified author's info is: " + selectedAuthor.get().toString());
             System.out.println();
             System.out.print("\nAre you sure to save it? (Y)es or (N)o : ");
             String answerToModify = sc.next();
             if (answerToModify.toUpperCase().equals("Y")) {
                 authorRepository.save(selectedAuthor.get());
-                System.out.println("The author's info has been updated.");
+                System.out.println("The author info has been updated.");
             }
         }
     }
