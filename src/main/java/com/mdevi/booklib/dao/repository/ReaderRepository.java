@@ -7,11 +7,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReaderRepository extends CrudRepository<Reader, Integer> {
+
     List<Reader> findAll();
 
     Optional<Reader> findReaderByName(String name);
 
-    Optional<Reader> findReaderById(Integer id);
-
-    List<Reader> findReadersByNameIsLike(String name);
+    List<Reader> findReadersByNameContaining(String name);
 }

@@ -35,7 +35,6 @@ public class ReaderRegistryOperations {
         }
     }
 
-
     public void showAllReaders() {
         final List<Reader> readerList = readerRepository.findAll();
         if (readerList.size() > 0) {
@@ -64,7 +63,7 @@ public class ReaderRegistryOperations {
                 readersList.add(reader.get());
             }
         } else {
-            readersList = readerRepository.findReadersByNameIsLike(namePattern);
+            readersList = readerRepository.findReadersByNameContaining(namePattern);
         }
         if (readersList.size() > 0) {
             readersList.sort(Comparator.comparingInt(Reader::getId));
