@@ -1,9 +1,6 @@
 package com.mdevi.booklib.model;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -11,39 +8,40 @@ import java.util.Objects;
 @Embeddable
 public class BorrowID implements Serializable {
 
-    @Column(name = "reader_id")
-    private Integer readerId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "book_id")
+    private Book book;
 
-    @Column(name = "book_id")
-    private Integer bookId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "reader_id")
+    private Reader reader;
 
     @Column(name = "date_from")
-    @Temporal(TemporalType.DATE)
     private Date dateFrom;
 
     public BorrowID() {
     }
 
-    public BorrowID(Integer readerId, Integer bookId, Date dateFrom) {
-        this.readerId = readerId;
-        this.bookId = bookId;
+    public BorrowID(Book book, Reader reader, Date dateFrom) {
+        this.book = book;
+        this.reader = reader;
         this.dateFrom = dateFrom;
     }
 
-    public Integer getReaderId() {
-        return readerId;
+    public Book getBook() {
+        return book;
     }
 
-    public void setReaderId(Integer readerId) {
-        this.readerId = readerId;
+    public void setBook(Book book) {
+        this.book = book;
     }
 
-    public Integer getBookId() {
-        return bookId;
+    public Reader getReader() {
+        return reader;
     }
 
-    public void setBookId(Integer bookId) {
-        this.bookId = bookId;
+    public void setReader(Reader reader) {
+        this.reader = reader;
     }
 
     public Date getDateFrom() {
@@ -59,13 +57,13 @@ public class BorrowID implements Serializable {
         if (this == o) return true;
         if (!(o instanceof BorrowID)) return false;
         BorrowID borrowID = (BorrowID) o;
-        return Objects.equals(getReaderId(), borrowID.getReaderId()) &&
-                Objects.equals(getBookId(), borrowID.getBookId()) &&
+        return Objects.equals(getBook(), borrowID.getBook()) &&
+                Objects.equals(getReader(), borrowID.getReader()) &&
                 Objects.equals(getDateFrom(), borrowID.getDateFrom());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getReaderId(), getBookId(), getDateFrom());
+        return Objects.hash(getBook(), getReader(), getDateFrom());
     }
 }

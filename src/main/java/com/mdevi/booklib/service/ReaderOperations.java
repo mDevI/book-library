@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,11 +48,13 @@ public class ReaderOperations {
                 Date dateFrom = Date.valueOf(today);
                 Date dateTill = Date.valueOf(returnDay);
 
-                Borrow borrow = new Borrow(book.get().getId(), reader.get().getId(), dateFrom, dateTill);
+                Borrow borrow = new Borrow(book.get(), reader.get(), dateFrom, dateTill);
                 borrowRepository.save(borrow);
-                //BookBorrow bookBorrow = new BookBorrow(book.get().getId(), reader.get(), dateFrom, dateTill);
-                //borrowRepository.save(bookBorrow);
-                //readerDAO.borrowTheBook(book, reader, dateFrom, dateTill);
+                // This is a correction of an available count of books in a library.
+                int count = book.get().getQuantity();
+                book.get().setQuantity(--count);
+                bookRepository.save(book.get());
+
                 System.out.println("The book \'" + book.get().getBookTitle() + "\' has been borrowed by " +
                         reader.get().getName() + " till " + dateTill.toString());
             } else {
@@ -61,25 +64,31 @@ public class ReaderOperations {
     }
 
     public void findAllBorrowedBooksByReader(Integer readerID) {
-/*
-        Reader theReader = readerDAO.findById(readerID);
-        if (theReader != null) {
-            List<Book> books = readerDAO.findAllBooksBorrowedByReader(theReader);
+        Optional<Reader> theReader = readerRepository.findById(readerID);
+        if (theReader.isPresent()) {
+            List<Borrow> borrowsByReader = borrowRepository.findBorrowsById_ReaderId(theReader.get().getId());
+            System.out.println(borrowsByReader.size());
+            List<Book> books = new ArrayList<>();
+            borrowsByReader.forEach(borrow -> {
+                if (borrow.getDateReturn() != null)
+                    books.add(borrow.getId().getBook());
+
+            });
+
             if (books.size() > 0) {
-                printBookList(books, theReader);
+                printBookList(books, theReader.get());
             } else {
-                System.out.println("The reader " + theReader.getName() + " hasn't currently debt any books.");
+                System.out.println("The reader " + theReader.get().getName() + " hasn't currently debt any books.");
             }
         } else {
             System.out.println("There is no such reader.");
         }
-*/
 
     }
 
     private void printBookList(List<Book> books, Reader reader) {
         int stringNumber = 1;
-        System.out.println("The reader: " + reader.getName() + " has borrowed that book(s):");
+        System.out.println("The reader " + reader.getName() + " has currently borrowed that book(s):");
         System.out.printf("%4s %10s %32s\n", "#", "BOOK ID", "TITLE");
         for (Book book : books) {
             System.out.printf("%4s %10s %32s\n", stringNumber, book.getId(), book.getBookTitle());
