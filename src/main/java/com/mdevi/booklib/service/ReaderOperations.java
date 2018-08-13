@@ -1,15 +1,20 @@
 package com.mdevi.booklib.service;
 
 import com.mdevi.booklib.dao.repository.BookRepository;
+import com.mdevi.booklib.dao.repository.BorrowRepository;
 import com.mdevi.booklib.dao.repository.CommentRepository;
 import com.mdevi.booklib.dao.repository.ReaderRepository;
 import com.mdevi.booklib.model.Book;
+import com.mdevi.booklib.model.Borrow;
 import com.mdevi.booklib.model.Comment;
 import com.mdevi.booklib.model.Reader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -19,32 +24,40 @@ public class ReaderOperations {
     private final ReaderRepository readerRepository;
     private final BookRepository bookRepository;
     private final CommentRepository commentRepository;
+    private final BorrowRepository borrowRepository;
 
 
     public ReaderOperations(ReaderRepository readerRepository,
                             BookRepository bookRepository,
-                            CommentRepository commentRepository) {
+                            CommentRepository commentRepository, BorrowRepository borrowRepository) {
         this.readerRepository = readerRepository;
         this.bookRepository = bookRepository;
         this.commentRepository = commentRepository;
+        this.borrowRepository = borrowRepository;
     }
 
     @Transactional
     public void borrowBook(String bookId, String readerId, String term) {
-/*
-        Book book = bookRepository.findById(Integer.parseInt(bookId)).get();
-        Reader reader = readerRepository.findById(Integer.parseInt(readerId)).get();
-        if (book.getQuantity() > 0) {
-            LocalDate today = LocalDate.now();
-            LocalDate returnDay = today.plusDays(Long.parseLong(term));
-            Date dateFrom = Date.valueOf(today);
-            Date dateTill = Date.valueOf(returnDay);
-            readerDAO.borrowTheBook(book, reader, dateFrom, dateTill);
-            System.out.println("The book \'" + book.getBookTitle() + "\' has been borrowed by " +
-                    reader.getName() + " till " + dateTill.toString());
-        } else {
-            System.out.println("This book is not available to borrow at the moment.");
-        }*/
+        Optional<Book> book = bookRepository.findById(Integer.parseInt(bookId));
+        Optional<Reader> reader = readerRepository.findById(Integer.parseInt(readerId));
+        if (book.isPresent() && reader.isPresent()) {
+            if (book.get().getQuantity() > 0) {
+                LocalDate today = LocalDate.now();
+                LocalDate returnDay = today.plusDays(Long.parseLong(term));
+                Date dateFrom = Date.valueOf(today);
+                Date dateTill = Date.valueOf(returnDay);
+
+                Borrow borrow = new Borrow(book.get().getId(), reader.get().getId(), dateFrom, dateTill);
+                borrowRepository.save(borrow);
+                //BookBorrow bookBorrow = new BookBorrow(book.get().getId(), reader.get(), dateFrom, dateTill);
+                //borrowRepository.save(bookBorrow);
+                //readerDAO.borrowTheBook(book, reader, dateFrom, dateTill);
+                System.out.println("The book \'" + book.get().getBookTitle() + "\' has been borrowed by " +
+                        reader.get().getName() + " till " + dateTill.toString());
+            } else {
+                System.out.println("This book is not available to borrow at the moment.");
+            }
+        }
     }
 
     public void findAllBorrowedBooksByReader(Integer readerID) {
