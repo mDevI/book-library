@@ -46,7 +46,7 @@ public class BooksOperations {
         if (searchStrongOption) {
             theBooks = bookRepository.findBooksByBookTitle(titlePattern);
         } else {
-            theBooks = bookRepository.findBooksByBookTitleIsLike(titlePattern);
+            theBooks = bookRepository.findAllByBookTitleIsContaining(titlePattern);
         }
         printBookList(theBooks, ALL_BOOKS_BY_TITLE);
     }
@@ -79,9 +79,9 @@ public class BooksOperations {
         System.out.print("Please, enter the book's title: ");
         String title = sc.nextLine();
         System.out.print("Please, enter count of pages: ");
-        Integer pages = Integer.parseInt(sc.nextLine());
+        int pages = Integer.parseInt(sc.nextLine());
         System.out.print("Please, enter count of books: ");
-        Integer count = Integer.parseInt(sc.nextLine());
+        int count = Integer.parseInt(sc.nextLine());
 
         Book newBook = new Book();
         newBook.setGenre(genre);
@@ -117,7 +117,7 @@ public class BooksOperations {
                 theBook.get().setPages(newBookPages);
 
             System.out.printf("Book quantity: (%2d): ", theBook.get().getQuantity());
-            Integer newBookCount = Integer.parseInt(sc.nextLine());
+            int newBookCount = Integer.parseInt(sc.nextLine());
             if (newBookCount != theBook.get().getQuantity()) theBook.get().setQuantity(newBookCount);
 
             System.out.printf("Book author ID: (%3d): ", theBook.get().getAuthor().getId());
@@ -148,7 +148,8 @@ public class BooksOperations {
     }
 
     public void deleteBookById(Integer id) {
-        bookRepository.deleteById(id);
+        Optional<Book> bookToRemove = bookRepository.findBookById(id);
+        if (bookToRemove.isPresent()) bookRepository.deleteById(id);
     }
 
     public void findBooksByGenre(String genreTitle) {
