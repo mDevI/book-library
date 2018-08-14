@@ -20,8 +20,8 @@ public class Reader {
     @Column(name = "discount")
     private byte discount_point;
 
-    @OneToMany(mappedBy = "reader", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BookBorrow> borrows = new ArrayList<>();
+    @OneToMany(mappedBy = "id.reader", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Borrow> borrows = new ArrayList<>();
 
     public Reader() {
     }
@@ -58,11 +58,11 @@ public class Reader {
         this.discount_point = discount_point;
     }
 
-    public List<BookBorrow> getBorrows() {
+    public List<Borrow> getBorrows() {
         return borrows;
     }
 
-    public void setBorrows(List<BookBorrow> borrows) {
+    public void setBorrows(List<Borrow> borrows) {
         this.borrows = borrows;
     }
 }
