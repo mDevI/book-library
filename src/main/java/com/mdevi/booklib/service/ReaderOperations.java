@@ -13,9 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -53,6 +54,7 @@ public class ReaderOperations {
                 // This is a correction of an available count of books in a library.
                 int count = book.get().getQuantity();
                 book.get().setQuantity(--count);
+                // Save to
                 bookRepository.save(book.get());
 
                 System.out.println("The book \'" + book.get().getBookTitle() + "\' has been borrowed by " +
@@ -67,31 +69,28 @@ public class ReaderOperations {
         Optional<Reader> theReader = readerRepository.findById(readerID);
         if (theReader.isPresent()) {
             List<Borrow> borrowsByReader = borrowRepository.findBorrowsById_ReaderId(theReader.get().getId());
-            System.out.println(borrowsByReader.size());
-            List<Book> books = new ArrayList<>();
-            borrowsByReader.forEach(borrow -> {
-                if (borrow.getDateReturn() != null)
-                    books.add(borrow.getId().getBook());
-
-            });
-
-            if (books.size() > 0) {
-                printBookList(books, theReader.get());
+            // cutting off all returned books by that reader...
+            borrowsByReader = borrowsByReader.stream()
+                    .filter(borrow -> borrow.getDateReturn() == null)
+                    .collect(Collectors.toList());
+            // if reader has currently had a book to be returned to the library then print it out.
+            if (borrowsByReader.size() > 0) {
+                printBookList(borrowsByReader, theReader.get());
             } else {
                 System.out.println("The reader " + theReader.get().getName() + " hasn't currently debt any books.");
             }
         } else {
             System.out.println("There is no such reader.");
         }
-
     }
 
-    private void printBookList(List<Book> books, Reader reader) {
+    private void printBookList(List<Borrow> books, Reader reader) {
         int stringNumber = 1;
         System.out.println("The reader " + reader.getName() + " has currently borrowed that book(s):");
-        System.out.printf("%4s %10s %32s\n", "#", "BOOK ID", "TITLE");
-        for (Book book : books) {
-            System.out.printf("%4s %10s %32s\n", stringNumber, book.getId(), book.getBookTitle());
+        System.out.printf("%4s %10s %52s %12s\n", "#", "BOOK ID", "TITLE", "DATE TILL");
+        for (Borrow borrow : books) {
+            System.out.printf("%4s %10s %52s %12s\n", stringNumber, borrow.getId().getBook().getId(),
+                    borrow.getId().getBook().getBookTitle(), borrow.getDateTill().toString());
             stringNumber++;
         }
 
@@ -100,12 +99,18 @@ public class ReaderOperations {
 
     @Transactional
     public void takeBackTheBook(Integer bookId, Integer readerID) {
-/*        Reader theReader = readerDAO.findById(readerID);
-        Book theBook = bookDAO.findById(bookId);
-        if (theReader != null) {
-            List<Book> books = readerDAO.findAllBooksBorrowedByReader(theReader);
-            if (books.size() > 0 && books.contains(theBook)) {
-                BookBorrow bookBorrow = readerDAO.returnTheBook(theBook, theReader);
+        Optional<Reader> theReader = readerRepository.findById(readerID);
+        Optional<Book> theBook = bookRepository.findById(bookId);
+        Borrow borrowToReturn;
+        if (theReader.isPresent() && theBook.isPresent()) {
+            List<Borrow> borrows = borrowRepository.findById_ReaderAndId_Book(theReader.get(), theBook.get()).stream()
+                    .filter(borrow -> borrow.getDateReturn() == null).collect(Collectors.toList());
+            if (borrows.size() > 0 && borrows.get(0).getId().getBook().equals(theBook.get())) {
+                borrowToReturn = borrows.get(0);
+                borrowToReturn.setDateReturn(Date.valueOf(LocalDate.now()));
+                int countAvail = borrowToReturn.getId().getBook().getQuantity();
+                borrowToReturn.getId().getBook().setQuantity(++countAvail);
+                borrowRepository.save(borrowToReturn);
                 System.out.println("The book has been taken back to the library.");
                 System.out.print("Do you wish to comment that book? (Y)es or (N)o : ");
                 Scanner sc = new Scanner(System.in);
@@ -121,33 +126,42 @@ public class ReaderOperations {
                     Comment theComment = new Comment();
                     theComment.setComment(textComment.toString());
                     theComment.setCommentDate(Date.valueOf(LocalDate.now()));
-                    commentDAO.insert(bookBorrow, theComment);
-                    System.out.println("Your book comment has been saved.");
+                    borrowToReturn.setComment(theComment);
+                    borrowRepository.save(borrowToReturn);
+                    System.out.println("Your comment has been saved.");
                 }
+            } else {
+                System.out.println("The reader with ID = " + readerID + " hasn't borrowed the book with ID = " + bookId);
             }
-        } else {
-            System.out.println("The reader with ID = " + readerID + " hasn't borrowed the book with ID = " + bookId);
-        }*/
+        }
     }
 
     public void showAllBookComments(Integer bookId) {
-/*        Book theBook = bookDAO.findById(bookId);
-        if (theBook != null) {
-            List<Comment> comments = commentDAO.findAllCommentsByBook(theBook);
+        Optional<Book> theBook = bookRepository.findById(bookId);
+        if (theBook.isPresent()) {
+            List<Comment> comments = borrowRepository.findBorrowsById_Book_Id(bookId).stream()
+                    .map(Borrow::getComment)
+                    .collect(Collectors.toList());
             if (comments.size() > 0) {
                 printCommentsList(comments, theBook);
+            } else {
+                System.out.println("That book hasn't any comments yet.");
             }
-        }*/
+        }
     }
 
     public void showAllReaderComments(Integer readerId) {
-/*        Reader theReader = readerDAO.findById(readerId);
-        if (theReader != null) {
-            List<Comment> comments = commentDAO.findAllCommentByReader(theReader);
+        Optional<Reader> theReader = readerRepository.findById(readerId);
+        if (theReader.isPresent()) {
+            List<Comment> comments = borrowRepository.findBorrowsById_ReaderId(readerId).stream()
+                    .map(Borrow::getComment)
+                    .collect(Collectors.toList());
             if (comments.size() > 0) {
                 printCommentsList(comments, theReader);
+            } else {
+                System.out.println("That reader hasn't done any comments yet.");
             }
-        }*/
+        }
     }
 
     private void printCommentsList(List<Comment> comments, Object o) {
@@ -164,5 +178,5 @@ public class ReaderOperations {
         for (Comment comment : comments) {
             System.out.println(comment.getCommentDate().toString() + " " + comment.getComment());
         }
+        }
     }
-}
