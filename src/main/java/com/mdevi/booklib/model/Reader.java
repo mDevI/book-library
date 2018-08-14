@@ -1,23 +1,29 @@
 package com.mdevi.booklib.model;
 
-import java.sql.Date;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
+@Entity
+@Table(name = "readers", schema = "new_schema")
 public class Reader {
+    @Id
+    //@SequenceGenerator(name = "reader_gen", sequenceName = "readers_reader_id_seq")
+    //@GeneratedValue(generator = "reader_gen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "reader_id")
     private int id;
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
-    private boolean gender;
-    private Date dob;
-    private int point;
+    @Column(name = "rank")
+    private int rank;
+    @Column(name = "discount")
+    private byte discount_point;
+
+    @OneToMany(mappedBy = "id.reader", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Borrow> borrows = new ArrayList<>();
 
     public Reader() {
-    }
-
-    public Reader(int id, String name, boolean gender, Date dob, int point) {
-        this.id = id;
-        this.name = name;
-        this.gender = gender;
-        this.dob = dob;
-        this.point = point;
     }
 
     public int getId() {
@@ -36,27 +42,27 @@ public class Reader {
         this.name = name;
     }
 
-    public boolean isGender() {
-        return gender;
+    public int getRank() {
+        return rank;
     }
 
-    public void setGender(boolean gender) {
-        this.gender = gender;
+    public void setRank(int rank) {
+        this.rank = rank;
     }
 
-    public Date getDob() {
-        return dob;
+    public byte getDiscount_point() {
+        return discount_point;
     }
 
-    public void setDob(Date dob) {
-        this.dob = dob;
+    public void setDiscount_point(byte discount_point) {
+        this.discount_point = discount_point;
     }
 
-    public int getPoint() {
-        return point;
+    public List<Borrow> getBorrows() {
+        return borrows;
     }
 
-    public void setPoint(int point) {
-        this.point = point;
+    public void setBorrows(List<Borrow> borrows) {
+        this.borrows = borrows;
     }
 }

@@ -1,13 +1,29 @@
 package com.mdevi.booklib.model;
 
-import java.sql.Date;
+import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
+@Entity
+@Table(name = "authors", schema = "new_schema")
 public class Author {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
+
+    @Column(name = "name", unique = true, length = 110)
     private String name;
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "dob")
     private Date dateOfBirth;
+
+    @OneToMany(mappedBy = "author",
+            cascade = {CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH})
     private List<Book> books;
+
+    @Column(name = "rank")
     private int rank;
 
     public Author() {
@@ -64,7 +80,7 @@ public class Author {
         return "Author{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", dateOfBirth=" + dateOfBirth +
+                ", dateOfBirth=" + dateOfBirth.toString() +
                 ", rank=" + rank +
                 '}';
     }
